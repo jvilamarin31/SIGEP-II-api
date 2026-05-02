@@ -1,0 +1,16 @@
+package com.apirest.backend.dtos.responses;
+
+import com.apirest.backend.models.enums.TipoIdentificacionUsuarios;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class LoginResponse {
+    private TipoIdentificacionUsuarios tipoIdentificacion;
+    private String numeroIdentificacion;
+    private String token;
+
+}

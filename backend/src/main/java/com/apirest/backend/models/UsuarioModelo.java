@@ -5,7 +5,6 @@ import com.apirest.backend.models.enums.TipoIdentificacionUsuarios;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,7 +16,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class UsuarioModelo {
     @Id
-    private ObjectId id;
+    private String id;
     private TipoIdentificacionUsuarios tipoIdentificacion;
     private String numeroIdentificacion;
     private String contraseña;

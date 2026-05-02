@@ -22,7 +22,7 @@ public class DatosBasicos {
     private ClaseLibretaMilitarCurriculum claseLibretaMilitar;
     private String numeroLibretaMilitar;
     private Integer distritoMilitar;
-    private String documentoIdentificado;
+    private String documentoIdentificacion;
     private boolean documentoVerificado;
     private String libretaMilitar;
     private boolean libretaVerificada;
