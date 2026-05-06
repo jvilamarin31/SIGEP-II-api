@@ -9,7 +9,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    tipoDocumento: TipoIdentificacion.CedulaDeCiudadania,
+    tipoIdentificacion: TipoIdentificacion.CedulaDeCiudadania,
     numeroIdentificacion: "",
     contraseña: "",
   });
@@ -80,7 +80,7 @@ const LoginPage: React.FC = () => {
               <select
                 name="tipoDocumento"
                 className="form-select"
-                value={form.tipoDocumento}
+                value={form.tipoIdentificacion}
                 onChange={handleChange}
               >
                 {Object.entries(TipoIdentificacionLabels).map(([value, label]) => (

@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { LoginRequest, LoginResponse, NuevoUsuarioRequest } from "../types";
+import {type LoginRequest, type LoginResponse, type NuevoUsuarioRequest, TipoIdentificacion} from "../types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -22,10 +22,20 @@ api.interceptors.request.use((config) => {
 // Auth
 export const authService = {
   login: (data: LoginRequest) =>
-    api.post<LoginResponse>("/api/auth/login", data).then((r) => r.data),
+      api.post<LoginResponse>("/api/auth/login", data).then((r) => r.data),
 
   crearUsuario: (data: NuevoUsuarioRequest) =>
-    api.post("/api/auth/registro", data).then((r) => r.data),
+      api.post("/api/auth/registro", data).then((r) => r.data),
+
+  cambiarContraseña: (data: { contraseña: string }) =>
+      api.put("/api/auth/cambiarContraseña", data).then((r) => r.data),
+
+  inhabilitarUsuario: (data: {
+    tipoIdentificacion: TipoIdentificacion;
+    numeroIdentificacion: string;
+    fechaFin: string;
+  }) =>
+      api.put("/api/auth/inhabilitarUsuario", data).then((r) => r.data),
 };
 
 export default api;

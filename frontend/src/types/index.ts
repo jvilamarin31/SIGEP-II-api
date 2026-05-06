@@ -32,18 +32,17 @@ export enum RolUsuario {
 }
 
 export enum Genero {
-  Masculino = "Masculino",
-  Femenino = "Femenino",
-  NoConforme = "NoConforme",
-  Otro = "Otro",
+  Masculino = "MASCULINO",
+  Femenino = "FEMENINO",
 }
 
 export enum EstadoCivil {
-  Soltero = "Soltero",
-  Casado = "Casado",
-  UnionLibre = "UnionLibre",
-  Divorciado = "Divorciado",
-  Viudo = "Viudo",
+  Soltero = "SOLTERO",
+  Casado = "CASADO",
+  UnionLibre = "UNIÓNLIBRE",
+  Divorciado = "DIVORCIADO",
+  Separado = "SEPARADO",
+  Viudo = "VIUDO",
 }
 
 export enum PreferenciaEtnica {
@@ -56,14 +55,15 @@ export enum PreferenciaEtnica {
 }
 
 export enum ClaseLibretaMilitar {
-  Primera = "Primera",
-  Segunda = "Segunda",
+  Primera = "PRIMERACLASE",
+  Segunda = "SEGUNDACLASE",
+  Provisional = "PROVISIONAL",
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export interface LoginRequest {
-  tipoDocumento: TipoIdentificacion;
+  tipoIdentificacion: TipoIdentificacion;
   numeroIdentificacion: string;
   contraseña: string;
 }
