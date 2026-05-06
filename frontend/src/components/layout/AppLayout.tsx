@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { TipoIdentificacionLabels } from "../../types";
 
 interface NavItem {
   label: string;
@@ -102,7 +103,8 @@ const AppLayout: React.FC<{ children: React.ReactNode; title?: string }> = ({ ch
             <span className="topbar-title">{title ?? "SIGEP II"}</span>
             <div className="topbar-right">
               <span className="text-sm text-muted">
-                {user?.tipoIdentificacion} · {user?.numeroIdentificacion}
+                {/* No es un error */}
+                {TipoIdentificacionLabels[user?.tipoIdentificacion]} · {user?.numeroIdentificacion}
               </span>
               <button className="btn-logout" onClick={handleLogout}>
                 <IconLogout /> Salir
