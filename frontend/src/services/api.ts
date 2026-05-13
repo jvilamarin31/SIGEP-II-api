@@ -1,5 +1,12 @@
 import axios from "axios";
-import {type LoginRequest, type LoginResponse, type NuevoUsuarioRequest, TipoIdentificacion} from "../types";
+import {
+  type CambiarContrasenaRequest,
+  type InhabilitarUsuarioRequest,
+  type LoginRequest,
+  type LoginResponse,
+  type NuevoUsuarioRequest,
+  type PedirEnlaceEmailRequest,
+} from "../types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -27,14 +34,16 @@ export const authService = {
   crearUsuario: (data: NuevoUsuarioRequest) =>
       api.post("/api/auth/registro", data).then((r) => r.data),
 
-  cambiarContraseña: (data: { contraseña: string }) =>
+  pedirEnlace: (data: PedirEnlaceEmailRequest) =>
+      api.post<string>("/api/auth/pedirEnlace", data).then((r) => r.data),
+
+  recuperarContrasena: (token: string, data: CambiarContrasenaRequest) =>
+      api.post<string>("/api/auth/recuperarContraseña", data, { params: { token } }).then((r) => r.data),
+
+  cambiarContraseña: (data: CambiarContrasenaRequest) =>
       api.put("/api/auth/cambiarContraseña", data).then((r) => r.data),
 
-  inhabilitarUsuario: (data: {
-    tipoIdentificacion: TipoIdentificacion;
-    numeroIdentificacion: string;
-    fechaFin: string;
-  }) =>
+  inhabilitarUsuario: (data: InhabilitarUsuarioRequest) =>
       api.put("/api/auth/inhabilitarUsuario", data).then((r) => r.data),
 };
 

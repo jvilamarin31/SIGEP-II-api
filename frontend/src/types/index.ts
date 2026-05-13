@@ -4,26 +4,50 @@ export enum TipoIdentificacion {
   CedulaDeCiudadania = "CedulaDeCiudadania",
   CedulaDeExtranjeria = "CedulaDeExtranjeria",
   CedulaMilitar = "CedulaMilitar",
-  Pasaporte = "Pasaporte",
-  TarjetaDeIdentidad = "TarjetaDeIdentidad",
-  TarjetaExtranjeria = "TarjetaExtranjeria",
-  PermisoDeProteccionTemporal = "PermisoDeProteccionTemporal",
-  RegistroCivil = "RegistroCivil",
+  CertificadoAntecedentesAbogado = "CertificadoAntecedentesAbogado",
+  CertificadoSobreAntecedentesDisciplinarios = "CertificadoSobreAntecedentesDisciplinarios",
+  CertificadoSobreAntecedentesFiscales = "CertificadoSobreAntecedentesFiscales",
+  EducacionComplementariaONoFormal = "EducacionComplementariaONoFormal",
+  LibretaMilitar = "LibretaMilitar",
+  LicenciaConduccionMotocicleta = "LicenciaConduccionMotocicleta",
+  LicenciadeConduccion = "LicenciadeConduccion",
+  MatriculaProfesional = "MatriculaProfesional",
+  NumeroDeIdentificacionTributaria = "NumeroDeIdentificacionTributaria",
+  NitEntidadPrivada = "NitEntidadPrivada",
   Nuip = "Nuip",
   Otro = "Otro",
+  Pasaporte = "Pasaporte",
+  PasadoJudicial = "PasadoJudicial",
+  PermisoDeProteccionTemporal = "PermisoDeProteccionTemporal",
+  RegistroCivil = "RegistroCivil",
+  RegistroProfesional = "RegistroProfesional",
+  TarjetaDeIdentidad = "TarjetaDeIdentidad",
+  TarjetaExtranjeria = "TarjetaExtranjeria",
 }
 
 export const TipoIdentificacionLabels: Record<TipoIdentificacion, string> = {
   [TipoIdentificacion.CedulaDeCiudadania]: "Cédula de Ciudadanía",
   [TipoIdentificacion.CedulaDeExtranjeria]: "Cédula de Extranjería",
   [TipoIdentificacion.CedulaMilitar]: "Cédula Militar",
-  [TipoIdentificacion.Pasaporte]: "Pasaporte",
-  [TipoIdentificacion.TarjetaDeIdentidad]: "Tarjeta de Identidad",
-  [TipoIdentificacion.TarjetaExtranjeria]: "Tarjeta Extranjería",
-  [TipoIdentificacion.PermisoDeProteccionTemporal]: "Permiso de Protección Temporal",
-  [TipoIdentificacion.RegistroCivil]: "Registro Civil",
+  [TipoIdentificacion.CertificadoAntecedentesAbogado]: "Certificado Antecedentes Abogado",
+  [TipoIdentificacion.CertificadoSobreAntecedentesDisciplinarios]: "Certificado Antecedentes Disciplinarios",
+  [TipoIdentificacion.CertificadoSobreAntecedentesFiscales]: "Certificado Antecedentes Fiscales",
+  [TipoIdentificacion.EducacionComplementariaONoFormal]: "Educación Complementaria o No Formal",
+  [TipoIdentificacion.LibretaMilitar]: "Libreta Militar",
+  [TipoIdentificacion.LicenciaConduccionMotocicleta]: "Licencia de Conducción Motocicleta",
+  [TipoIdentificacion.LicenciadeConduccion]: "Licencia de Conducción",
+  [TipoIdentificacion.MatriculaProfesional]: "Matrícula Profesional",
+  [TipoIdentificacion.NumeroDeIdentificacionTributaria]: "Número de Identificación Tributaria",
+  [TipoIdentificacion.NitEntidadPrivada]: "NIT Entidad Privada",
   [TipoIdentificacion.Nuip]: "NUIP",
   [TipoIdentificacion.Otro]: "Otro",
+  [TipoIdentificacion.Pasaporte]: "Pasaporte",
+  [TipoIdentificacion.PasadoJudicial]: "Pasado Judicial",
+  [TipoIdentificacion.PermisoDeProteccionTemporal]: "Permiso de Protección Temporal",
+  [TipoIdentificacion.RegistroCivil]: "Registro Civil",
+  [TipoIdentificacion.RegistroProfesional]: "Registro Profesional",
+  [TipoIdentificacion.TarjetaDeIdentidad]: "Tarjeta de Identidad",
+  [TipoIdentificacion.TarjetaExtranjeria]: "Tarjeta Extranjería",
 };
 
 export enum RolUsuario {
@@ -79,6 +103,21 @@ export interface NuevoUsuarioRequest {
   numeroIdentificacion: string;
   email: string;
   contraseña: string;
+}
+
+export interface PedirEnlaceEmailRequest {
+  tipoIdentificacion: TipoIdentificacion;
+  numeroIdentificacion: string;
+}
+
+export interface CambiarContrasenaRequest {
+  contraseña: string;
+}
+
+export interface InhabilitarUsuarioRequest {
+  tipoIdentificacion: TipoIdentificacion;
+  numeroIdentificacion: string;
+  fechaFin: string;
 }
 
 // ─── Curriculum ───────────────────────────────────────────────────────────────
