@@ -1,7 +1,6 @@
-package com.apirest.backend.dtos.requests;
+package com.apirest.backend.dtos.requests.usuarios;
 
 import com.apirest.backend.models.enums.TipoIdentificacionUsuarios;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

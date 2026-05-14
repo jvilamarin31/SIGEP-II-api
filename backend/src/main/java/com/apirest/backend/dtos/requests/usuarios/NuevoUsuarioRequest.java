@@ -1,4 +1,4 @@
-package com.apirest.backend.dtos.requests;
+package com.apirest.backend.dtos.requests.usuarios;
 
 import com.apirest.backend.models.enums.TipoIdentificacionUsuarios;
 import jakarta.validation.constraints.Email;

@@ -1,6 +1,6 @@
 package com.apirest.backend.services;
 
-import com.apirest.backend.dtos.requests.*;
+import com.apirest.backend.dtos.requests.usuarios.*;
 import com.apirest.backend.dtos.responses.LoginResponse;
 import com.apirest.backend.exceptions.InvalidCredentialsException;
 import com.apirest.backend.exceptions.UserAlreadyExistsException;
