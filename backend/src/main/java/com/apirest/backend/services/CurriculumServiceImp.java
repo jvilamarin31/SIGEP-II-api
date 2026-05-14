@@ -4,13 +4,9 @@ package com.apirest.backend.services;
 import com.apirest.backend.dtos.requests.curriculums.DatosBasicosRequest;
 import com.apirest.backend.models.curriculum.CurriculumModelo;
 import com.apirest.backend.models.curriculum.sections.DatosBasicos;
-import com.apirest.backend.models.enums.ClaseLibretaMilitarCurriculum;
-import com.apirest.backend.models.enums.GeneroCurriculum;
-import com.apirest.backend.models.enums.TipoIdentificacionUsuarios;
 import com.apirest.backend.repositories.ICurriculumRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.Optional;
 
 @Service
@@ -37,20 +33,19 @@ public class CurriculumServiceImp implements ICurriculumService{
                         .tipoIdentificacion(curriculumRequest.getTipoIdentificacion())
                         .numeroIdentificacion(curriculumRequest.getNumeroIdentificacion())
                         .fechaNacimiento(curriculumRequest.getFechaNacimiento())
-                        .
-                .build());
-        private TipoIdentificacionUsuarios tipoIdentificacion;
-        private String numeroIdentificacion;
-        private Instant fechaNacimiento;
-        private String email;
-        private GeneroCurriculum genero;
-        private ClaseLibretaMilitarCurriculum claseLibretaMilitar;
-        private String numeroLibretaMilitar;
-        private Integer distritoMilitar;
-        private String documentoIdentificacion;
-        private boolean documentoVerificado;
-        private String libretaMilitar;
-        private boolean libretaVerificada;
-        private boolean personaExpuestaPoliticamente;
+                        .email(curriculumRequest.getEmail())
+                        .genero(curriculumRequest.getGenero())
+                        .claseLibretaMilitar(curriculumRequest.getClaseLibretaMilitar())
+                        .numeroLibretaMilitar(curriculumRequest.getNumeroLibretaMilitar())
+                        .distritoMilitar(curriculumRequest.getDistritoMilitar())
+                        .documentoIdentificacion(curriculumRequest.getDocumentoIdentificacion())
+                        .documentoVerificado(curriculumRequest.isDocumentoVerificado())
+                        .libretaMilitar(curriculumRequest.getLibretaMilitar())
+                        .libretaVerificada(curriculumRequest.isLibretaVerificada())
+                        .personaExpuestaPoliticamente(curriculumRequest.isPersonaExpuestaPoliticamente())
+                        .build());
+
+        curriculumRepository.save(curriculumFinal);
+        
     }
 }

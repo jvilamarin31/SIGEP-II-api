@@ -5,7 +5,6 @@ import com.apirest.backend.models.curriculum.sections.DatosContacto;
 import com.apirest.backend.models.curriculum.sections.DatosDemograficos;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
