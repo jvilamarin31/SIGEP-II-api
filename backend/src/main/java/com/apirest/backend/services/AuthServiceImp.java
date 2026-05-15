@@ -1,6 +1,6 @@
 package com.apirest.backend.services;
 
-import com.apirest.backend.dtos.requests.*;
+import com.apirest.backend.dtos.requests.usuarios.*;
 import com.apirest.backend.dtos.responses.LoginResponse;
 import com.apirest.backend.exceptions.InvalidCredentialsException;
 import com.apirest.backend.exceptions.UserAlreadyExistsException;
@@ -65,6 +65,9 @@ public class AuthServiceImp implements IAuthService{
             throw new UserNotFoundException(usuarioRequest.getNumeroIdentificacion());
         }
         UsuarioModelo usuarioFinal = usuarioExiste.get();
+        if (!usuarioFinal.isEstadoActivo()){
+            throw new InvalidCredentialsException("Estado inactivo. ");
+        }
         String tokenRecuperarContraseña = jwtService.generarTokenRecuperacion(usuarioFinal.getId(), usuarioFinal.getRol(), usuarioFinal.getNumeroIdentificacion());
         String enlance = "http://localhost:5173/recuperar-contraseña?token=" + tokenRecuperarContraseña;
 

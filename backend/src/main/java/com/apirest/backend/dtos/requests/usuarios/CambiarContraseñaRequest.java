@@ -1,4 +1,4 @@
-package com.apirest.backend.dtos.requests;
+package com.apirest.backend.dtos.requests.usuarios;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
