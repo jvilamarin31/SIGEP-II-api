@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/api";
@@ -7,6 +7,10 @@ import { TipoIdentificacion, TipoIdentificacionLabels } from "../../types";
 const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.removeItem("sigep_user");
+  }, []);
 
   const [form, setForm] = useState({
     tipoIdentificacion: TipoIdentificacion.CedulaDeCiudadania,

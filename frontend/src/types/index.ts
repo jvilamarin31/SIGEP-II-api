@@ -252,4 +252,7 @@ export interface AuthUser {
   tipoIdentificacion: TipoIdentificacion;
   numeroIdentificacion: string;
   token: string;
+  id?: string;
+  rol: RolUsuario;
+  tokenExp?: number;
 }

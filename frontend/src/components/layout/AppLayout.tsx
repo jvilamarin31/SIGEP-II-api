@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { TipoIdentificacionLabels } from "../../types";
+import { RolUsuario, TipoIdentificacionLabels } from "../../types";
 
 interface NavItem {
   label: string;
@@ -72,9 +72,12 @@ const mainNavItems: NavItem[] = [
   { label: "Experiencia Laboral", path: "/curriculum/experiencia", icon: <IconExperiencia /> },
 ];
 
-const userNavItems: NavItem[] = [
+const managementNavItems: NavItem[] = [
   { label: "Crear usuario", path: "/usuarios/crear", icon: <IconUser /> },
   { label: "Inhabilitar usuario", path: "/usuarios/inhabilitar", icon: <IconBlockUser /> },
+];
+
+const profileNavItems: NavItem[] = [
   { label: "Cambiar contraseña", path: "/perfil/cambiar-contrasena", icon: <IconKey /> },
 ];
 
@@ -92,6 +95,12 @@ const AppLayout: React.FC<{ children: React.ReactNode; title?: string }> = ({ ch
   const tipoIdentificacionLabel = user?.tipoIdentificacion
       ? TipoIdentificacionLabels[user.tipoIdentificacion]
       : "Usuario";
+
+  const roleLabel = user?.rol === RolUsuario.JefeDeTalentoHumano
+      ? "Jefe de Talento Humano"
+      : "Servidor Público";
+
+  const canManageUsers = user?.rol === RolUsuario.JefeDeTalentoHumano;
 
   const renderNavItem = (item: NavItem) => (
       <Link
@@ -118,8 +127,15 @@ const AppLayout: React.FC<{ children: React.ReactNode; title?: string }> = ({ ch
               <div className="nav-section-label">Principal</div>
               {mainNavItems.map(renderNavItem)}
 
-              <div className="nav-section-label">Usuarios</div>
-              {userNavItems.map(renderNavItem)}
+              {canManageUsers && (
+                <>
+                  <div className="nav-section-label">Usuarios</div>
+                  {managementNavItems.map(renderNavItem)}
+                </>
+              )}
+
+              <div className="nav-section-label">Perfil</div>
+              {profileNavItems.map(renderNavItem)}
             </nav>
 
             <div className="sidebar-footer">
@@ -127,7 +143,7 @@ const AppLayout: React.FC<{ children: React.ReactNode; title?: string }> = ({ ch
                 <div className="avatar">{initials}</div>
                 <div className="user-info">
                   <div className="user-name">{user?.numeroIdentificacion ?? "Usuario"}</div>
-                  <div className="user-role">Servidor Público</div>
+                  <div className="user-role">{roleLabel}</div>
                 </div>
               </div>
             </div>

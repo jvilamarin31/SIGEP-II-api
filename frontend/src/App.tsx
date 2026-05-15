@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { RolUsuario } from "./types";
 
 import LoginPage           from "./pages/auth/LoginPage";
 import ForgotPasswordPage  from "./pages/auth/ForgotPasswordPage";
@@ -28,8 +29,8 @@ const App: React.FC = () => (
           <Route path="/curriculum/datos-personales" element={<ProtectedRoute><DatosPersonalesPage /></ProtectedRoute>} />
           <Route path="/curriculum/educacion" element={<ProtectedRoute><EducacionPage /></ProtectedRoute>} />
           <Route path="/curriculum/experiencia" element={<ProtectedRoute><ExperienciaPage /></ProtectedRoute>} />
-          <Route path="/usuarios/crear" element={<ProtectedRoute><CreateUserPage /></ProtectedRoute>} />
-          <Route path="/usuarios/inhabilitar" element={<ProtectedRoute><DisableUserPage /></ProtectedRoute>} />
+          <Route path="/usuarios/crear" element={<ProtectedRoute allowedRoles={[RolUsuario.JefeDeTalentoHumano]}><CreateUserPage /></ProtectedRoute>} />
+          <Route path="/usuarios/inhabilitar" element={<ProtectedRoute allowedRoles={[RolUsuario.JefeDeTalentoHumano]}><DisableUserPage /></ProtectedRoute>} />
           <Route path="/perfil/cambiar-contrasena" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />

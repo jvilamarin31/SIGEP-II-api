@@ -9,6 +9,7 @@ import {
 } from "../types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
+const STORAGE_KEY = "sigep_user";
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -16,15 +17,50 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const stored = localStorage.getItem("sigep_user");
+  const publicRoutes = [
+    "/api/auth/login",
+    "/api/auth/pedirEnlace",
+    "/api/auth/recuperarContraseña",
+  ];
+
+  const isPublicRoute = publicRoutes.some((route) => config.url?.includes(route));
+
+  if (isPublicRoute) {
+    delete config.headers.Authorization;
+    return config;
+  }
+
+  const stored = localStorage.getItem(STORAGE_KEY);
+
   if (stored) {
-    const user = JSON.parse(stored);
-    if (user.token) {
-      config.headers.Authorization = `Bearer ${user.token}`;
+    try {
+      const user = JSON.parse(stored);
+
+      if (user?.token) {
+        config.headers.Authorization = `Bearer ${user.token}`;
+      }
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
     }
   }
+
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      localStorage.removeItem(STORAGE_KEY);
+
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 // Auth
 export const authService = {
