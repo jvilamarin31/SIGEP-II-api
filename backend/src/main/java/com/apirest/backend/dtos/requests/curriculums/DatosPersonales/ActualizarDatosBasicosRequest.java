@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ActualizarDatosBasicosRequest {
-    @Size(max = 150)
     private ClaseLibretaMilitarCurriculum claseLibretaMilitar;
     @Size(max = 150)
     private String numeroLibretaMilitar;
@@ -18,8 +17,6 @@ public class ActualizarDatosBasicosRequest {
     private Integer distritoMilitar;
     @Size(max = 150)
     private String libretaMilitar;
-    @Size(max = 150)
     private Boolean libretaVerificada;
-    @Size(max = 150)
     private Boolean personaExpuestaPoliticamente;
 }

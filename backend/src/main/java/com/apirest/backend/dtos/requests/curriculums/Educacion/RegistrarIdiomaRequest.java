@@ -29,7 +29,6 @@ public class RegistrarIdiomaRequest {
     @NotNull
     private IdiomaCurriculum redaccion;
     @NotBlank
-    @Size(max = 150)
     private Boolean lenguaNativa;
     private String certificado;
 }

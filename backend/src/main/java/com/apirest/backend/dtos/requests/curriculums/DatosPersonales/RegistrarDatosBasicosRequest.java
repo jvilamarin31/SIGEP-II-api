@@ -37,16 +37,13 @@ public class RegistrarDatosBasicosRequest {
     private ClaseLibretaMilitarCurriculum claseLibretaMilitar;
     @Size(max = 150)
     private String numeroLibretaMilitar;
-    @Size(max = 150)
+    @Max(1000000000)
     private Integer distritoMilitar;
     @Size(max = 150)
     private String documentoIdentificacion;
-    @Size(max = 150)
     private Boolean documentoVerificado;
     @Size(max = 150)
     private String libretaMilitar;
-    @Size(max = 150)
     private Boolean libretaVerificada;
-    @Size(max = 150)
     private Boolean personaExpuestaPoliticamente;
 }
