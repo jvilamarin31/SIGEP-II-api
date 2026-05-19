@@ -4,6 +4,8 @@ import com.apirest.backend.dtos.requests.curriculums.DatosPersonales.*;
 import com.apirest.backend.dtos.requests.curriculums.Educacion.RegistrarEducacionTrabajoRequest;
 import com.apirest.backend.dtos.requests.curriculums.Educacion.RegistrarFormacionAcademicaRequest;
 import com.apirest.backend.dtos.requests.curriculums.Educacion.RegistrarIdiomaRequest;
+import com.apirest.backend.dtos.requests.curriculums.ExperienciaLaboral.RegistrarExperienciaLaboralDocenteRequest;
+import com.apirest.backend.dtos.requests.curriculums.ExperienciaLaboral.RegistrarExperienciaLaboralRequest;
 import com.apirest.backend.models.UsuarioModelo;
 import com.apirest.backend.services.ICurriculumService;
 import jakarta.validation.Valid;
@@ -73,6 +75,18 @@ public class CurriculumController {
     @PostMapping("/educacion/idioma")
     public ResponseEntity<Void> registrarIdioma(@AuthenticationPrincipal UsuarioModelo usuario, @Valid @RequestBody RegistrarIdiomaRequest curriculumRequest) {
         curriculumService.registrarIdioma(usuario.getId(), curriculumRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/experienciaLaboral")
+    public ResponseEntity<Void> registrarExperienciaLaboral(@AuthenticationPrincipal UsuarioModelo usuario, @Valid @RequestBody RegistrarExperienciaLaboralRequest curriculumRequest) {
+        curriculumService.registrarExperienciaLaboral(usuario.getId(), curriculumRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/experienciaLaboral/docente")
+    public ResponseEntity<Void> registrarExperienciaLaboralDocente(@AuthenticationPrincipal UsuarioModelo usuario, @Valid @RequestBody RegistrarExperienciaLaboralDocenteRequest curriculumRequest) {
+        curriculumService.registrarExperienciaLaboralDocente(usuario.getId(), curriculumRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

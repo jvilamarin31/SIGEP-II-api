@@ -9,10 +9,7 @@ import com.apirest.backend.dtos.requests.curriculums.ExperienciaLaboral.Registra
 import com.apirest.backend.dtos.requests.curriculums.ExperienciaLaboral.RegistrarExperienciaLaboralRequest;
 import com.apirest.backend.exceptions.CurriculumAlreadyExistsException;
 import com.apirest.backend.exceptions.CurriculumNotFoundException;
-import com.apirest.backend.models.curriculum.CurriculumModelo;
-import com.apirest.backend.models.curriculum.DatosPersonales;
-import com.apirest.backend.models.curriculum.Educacion;
-import com.apirest.backend.models.curriculum.ExperienciaLaboral;
+import com.apirest.backend.models.curriculum.*;
 import com.apirest.backend.models.curriculum.sections.*;
 import com.apirest.backend.repositories.ICurriculumRepository;
 import org.springframework.stereotype.Service;
@@ -359,7 +356,42 @@ public class CurriculumServiceImp implements ICurriculumService{
 
     @Override
     public void registrarExperienciaLaboralDocente(String usuarioId, RegistrarExperienciaLaboralDocenteRequest curriculumRequest) {
+        Optional<CurriculumModelo> curriculumExiste = curriculumRepository.findByUsuarioId(usuarioId);
+        if (!curriculumExiste.isPresent()) {
+            throw new CurriculumNotFoundException("No se ha encontrado un curriculum registrado para el usuario " + usuarioId);
+        }
 
+        CurriculumModelo curriculumFinal = curriculumExiste.get();
+
+        if (curriculumFinal.getExperienciasLaboralesDocente() == null) {
+            curriculumFinal.setExperienciasLaboralesDocente(new ArrayList<>());
+        }
+
+        ExperienciaLaboralDocente experienciaLaboralDocente = ExperienciaLaboralDocente.builder()
+                .tipoInstitucion(curriculumRequest.getTipoInstitucion())
+                .nombreInstitucion(curriculumRequest.getNombreInstitucion())
+                .pais(curriculumRequest.getPais())
+                .departamento(curriculumRequest.getDepartamento())
+                .municipio(curriculumRequest.getMunicipio())
+                .nivelAcademico(curriculumRequest.getNivelAcademico())
+                .areaConocimiento(curriculumRequest.getAreaConocimiento())
+                .tipoZona(curriculumRequest.getTipoZona())
+                .trabajoActual(curriculumRequest.getTrabajoActual())
+                .fechaIngreso(curriculumRequest.getFechaIngreso())
+                .fechaTerminacion(curriculumRequest.getFechaTerminacion())
+                .jornadaLaboral(curriculumRequest.getJornadaLaboral())
+                .horasPromedioMes(curriculumRequest.getHorasPromedioMes())
+                .motivoRetiro(curriculumRequest.getMotivoRetiro())
+                .telefono(curriculumRequest.getTelefono())
+                .materiaImpartida(curriculumRequest.getMateriaImpartida())
+                .tiempoExperiencia(curriculumRequest.getTiempoExperiencia())
+                .certificadoLaboral(curriculumRequest.getCertificadoLaboral())
+                .documentoVerificado(curriculumRequest.getDocumentoVerificado())
+                .build();
+
+        curriculumFinal.getExperienciasLaboralesDocente().add(experienciaLaboralDocente);
+
+        curriculumRepository.save(curriculumFinal);
     }
 
 
