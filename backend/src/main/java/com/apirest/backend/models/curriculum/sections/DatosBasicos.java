@@ -1,8 +1,8 @@
 package com.apirest.backend.models.curriculum.sections;
 
-import com.apirest.backend.models.enums.ClaseLibretaMilitarCurriculum;
-import com.apirest.backend.models.enums.GeneroCurriculum;
-import com.apirest.backend.models.enums.TipoIdentificacionUsuarios;
+import com.apirest.backend.models.enums.Curriculum.ClaseLibretaMilitarCurriculum;
+import com.apirest.backend.models.enums.Curriculum.GeneroCurriculum;
+import com.apirest.backend.models.enums.Usuario.TipoIdentificacionUsuarios;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

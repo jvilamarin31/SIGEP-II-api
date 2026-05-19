@@ -7,7 +7,7 @@ import com.apirest.backend.exceptions.UserAlreadyExistsException;
 import com.apirest.backend.exceptions.UserNotFoundException;
 import com.apirest.backend.jwts.JwtService;
 import com.apirest.backend.models.UsuarioModelo;
-import com.apirest.backend.models.enums.RolUsuarios;
+import com.apirest.backend.models.enums.Usuario.RolUsuarios;
 import com.apirest.backend.repositories.IUsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class AuthServiceImp implements IAuthService{
         if(!passwordEncoder.matches(usuarioRequest.getContraseña(), usuarioFinal.getContraseña())){
             throw new InvalidCredentialsException("Credenciales invalidas. ");
         }
-        if(!usuarioFinal.isEstadoActivo()){
+        if(!usuarioFinal.getEstadoActivo()){
             throw new InvalidCredentialsException("Estado inactivo. ");
         }
         if (usuarioFinal.getFechaFin() != null && !usuarioFinal.getFechaFin().isAfter(Instant.now())){
@@ -65,7 +65,7 @@ public class AuthServiceImp implements IAuthService{
             throw new UserNotFoundException(usuarioRequest.getNumeroIdentificacion());
         }
         UsuarioModelo usuarioFinal = usuarioExiste.get();
-        if (!usuarioFinal.isEstadoActivo()){
+        if (!usuarioFinal.getEstadoActivo()){
             throw new InvalidCredentialsException("Estado inactivo. ");
         }
         String tokenRecuperarContraseña = jwtService.generarTokenRecuperacion(usuarioFinal.getId(), usuarioFinal.getRol(), usuarioFinal.getNumeroIdentificacion());
