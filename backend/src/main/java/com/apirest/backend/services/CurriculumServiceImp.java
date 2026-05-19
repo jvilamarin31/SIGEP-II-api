@@ -33,7 +33,7 @@ public class CurriculumServiceImp implements ICurriculumService{
     @Override
     public void registrarDatosPersonalesBasicos(String usuarioId, RegistrarDatosBasicosRequest curriculumRequest) {
         Optional<CurriculumModelo> curriculumExiste = curriculumRepository.findByUsuarioId(usuarioId);
-        if (!curriculumExiste.isPresent()){
+        if (curriculumExiste.isPresent()){
             throw new CurriculumAlreadyExistsException("Este usuario ya tiene datos basicos registrados. ");
         }
         CurriculumModelo curriculumFinal = new CurriculumModelo();
