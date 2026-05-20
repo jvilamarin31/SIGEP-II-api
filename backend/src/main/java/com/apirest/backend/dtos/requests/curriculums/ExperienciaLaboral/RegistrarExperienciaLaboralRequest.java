@@ -36,7 +36,7 @@ public class RegistrarExperienciaLaboralRequest {
     @Size(max = 150)
     private String dependencia;
     @NotNull
-    private NivelJerarquicoEmpleoCurriculum nivelJerarquiaEmpleo;
+    private NivelJerarquicoEmpleoCurriculum nivelJerarquicoEmpleo;
     @NotBlank
     @Size(max = 150)
     private String cargo;
