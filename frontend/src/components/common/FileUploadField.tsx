@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useId, useRef, useState } from "react";
 import { fileService, getApiError } from "../../services/api";
 
 interface FileUploadFieldProps {
@@ -27,6 +27,7 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({
   disabled,
   helperText = "PDF, JPG o PNG. Máximo 10 MB.",
 }) => {
+  const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -67,11 +68,12 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({
 
   return (
     <div className="form-group">
-      <label className="form-label">
+      <label className="form-label" htmlFor={inputId}>
         {label} {required && <span className="required">*</span>}
       </label>
 
       <input
+        id={inputId}
         ref={inputRef}
         type="file"
         accept={ACCEPTED_TYPES}
