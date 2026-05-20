@@ -24,6 +24,11 @@ import java.util.Optional;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final List<String> PUBLIC_PATHS = List.of(
+            "/api/auth/login",
+            "/api/auth/pedirEnlace",
+            "/api/auth/recuperarContraseña"
+    );
 
     private final JwtService jwtService;
     private final IUsuarioRepository usuarioRepository;
@@ -35,6 +40,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        String requestURI = request.getRequestURI();
+
+        if (PUBLIC_PATHS.stream().anyMatch(requestURI::startsWith)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String token = getTokenFromReques(request);
         final String usuarioId;
