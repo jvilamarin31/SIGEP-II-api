@@ -185,7 +185,7 @@ class AuthServiceImpTest {
         when(jwtService.getClaimByName(token, "proposito")).thenReturn("recuperar_contraseña");
         when(jwtService.getUsuarioIdFromToken(token)).thenReturn(usuarioId);
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
-        when(passwordEncoder.encode("newPass123")).thenReturn("encodedNew");
+        when(passwordEncoder.encode("newPass123!")).thenReturn("encodedNew");
 
         authService.cambiarContraseñaDesdeEmail(token, request);
 
