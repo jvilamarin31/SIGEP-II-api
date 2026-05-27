@@ -9,6 +9,7 @@ import com.apirest.backend.jwts.JwtService;
 import com.apirest.backend.models.UsuarioModelo;
 import com.apirest.backend.models.enums.Usuario.RolUsuarios;
 import com.apirest.backend.repositories.IUsuarioRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,9 @@ public class AuthServiceImp implements IAuthService{
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     public AuthServiceImp(IUsuarioRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.usuarioRepository = userRepository;
@@ -60,18 +64,21 @@ public class AuthServiceImp implements IAuthService{
 
     @Override
     public void pedirEnlaceEmail(PedirEnlaceEmailRequest usuarioRequest) {
-        Optional<UsuarioModelo> usuarioExiste = usuarioRepository.findByNumeroIdentificacionAndTipoIdentificacion(usuarioRequest.getNumeroIdentificacion(), usuarioRequest.getTipoIdentificacion());
-        if (!usuarioExiste.isPresent()){
+        Optional<UsuarioModelo> usuarioExiste = usuarioRepository.findByNumeroIdentificacionAndTipoIdentificacion(
+                usuarioRequest.getNumeroIdentificacion(), usuarioRequest.getTipoIdentificacion());
+        if (!usuarioExiste.isPresent()) {
             throw new UserNotFoundException(usuarioRequest.getNumeroIdentificacion());
         }
         UsuarioModelo usuarioFinal = usuarioExiste.get();
-        if (!usuarioFinal.getEstadoActivo()){
+        if (!usuarioFinal.getEstadoActivo()) {
             throw new InvalidCredentialsException("Estado inactivo. ");
         }
-        String tokenRecuperarContraseña = jwtService.generarTokenRecuperacion(usuarioFinal.getId(), usuarioFinal.getRol(), usuarioFinal.getNumeroIdentificacion());
-        String enlance = "http://localhost:5173/recuperar-contraseña?token=" + tokenRecuperarContraseña;
+        String tokenRecuperarContraseña = jwtService.generarTokenRecuperacion(usuarioFinal.getId(),
+                usuarioFinal.getRol(), usuarioFinal.getNumeroIdentificacion());
+        // Usa la URL base dinámica
+        String enlace = frontendUrl + "/recuperar-contraseña?token=" + tokenRecuperarContraseña;
 
-        emailService.enviarEnlaceRecuperacion(usuarioFinal.getEmail(), enlance);
+        emailService.enviarEnlaceRecuperacion(usuarioFinal.getEmail(), enlace);
     }
 
     @Override
