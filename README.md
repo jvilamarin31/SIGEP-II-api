@@ -1207,3 +1207,5 @@ Antes de probar el sistema completo:
 - [ ] Datos básicos guardados.
 - [ ] Archivo de prueba subido correctamente.
 - [ ] PDF de hoja de vida descargado correctamente.
+
+
