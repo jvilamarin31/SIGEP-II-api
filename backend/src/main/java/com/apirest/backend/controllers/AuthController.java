@@ -60,4 +60,6 @@ public class AuthController {
         return ResponseEntity.ok("Contraseña cambiada papi al toque su rey. ");
     }
 
+    //Prueba de CI 1
+
 }
