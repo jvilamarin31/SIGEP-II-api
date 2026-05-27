@@ -67,7 +67,7 @@ class AuthServiceImpTest {
         loginRequest = new LoginRequest();
         loginRequest.setTipoIdentificacion(TipoIdentificacionUsuarios.CedulaDeCiudadania);
         loginRequest.setNumeroIdentificacion("123456789");
-        loginRequest.setContraseña("password123");
+        loginRequest.setContraseña("password123!");
 
         pedirEnlaceRequest = new PedirEnlaceEmailRequest();
         pedirEnlaceRequest.setTipoIdentificacion(TipoIdentificacionUsuarios.CedulaDeCiudadania);
@@ -77,7 +77,7 @@ class AuthServiceImpTest {
         nuevoUsuarioRequest.setTipoIdentificacion(TipoIdentificacionUsuarios.CedulaDeCiudadania);
         nuevoUsuarioRequest.setNumeroIdentificacion("987654321");
         nuevoUsuarioRequest.setEmail("nuevo@test.com");
-        nuevoUsuarioRequest.setContraseña("newPass123");
+        nuevoUsuarioRequest.setContraseña("password123!");
 
         inhabilitarRequest = new InhabilitarRequest();
         inhabilitarRequest.setTipoIdentificacion(TipoIdentificacionUsuarios.CedulaDeCiudadania);
@@ -179,7 +179,7 @@ class AuthServiceImpTest {
     void cambiarContraseñaDesdeEmail_Success() {
         String token = "validToken";
         CambiarContraseñaRequest request = new CambiarContraseñaRequest();
-        request.setContraseña("newPass123");
+        request.setContraseña("newPass123!");
 
         when(jwtService.isExpiradoToken(token)).thenReturn(false);
         when(jwtService.getClaimByName(token, "proposito")).thenReturn("recuperar_contraseña");
@@ -228,9 +228,9 @@ class AuthServiceImpTest {
     @Test
     void cambiarContraseña_Success() {
         CambiarContraseñaRequest request = new CambiarContraseñaRequest();
-        request.setContraseña("newPass");
+        request.setContraseña("newPass!");
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
-        when(passwordEncoder.encode("newPass")).thenReturn("encodedNew");
+        when(passwordEncoder.encode("newPass!")).thenReturn("encodedNew");
 
         authService.cambiarContraseña(usuarioId, request);
 

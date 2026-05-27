@@ -53,7 +53,7 @@ class AuthControllerTest {
         LoginRequest request = new LoginRequest();
         request.setTipoIdentificacion(TipoIdentificacionUsuarios.CedulaDeCiudadania);
         request.setNumeroIdentificacion("123");
-        request.setContraseña("pass");
+        request.setContraseña("password123!");
         LoginResponse response = LoginResponse.builder()
                 .tipoIdentificacion(TipoIdentificacionUsuarios.CedulaDeCiudadania)
                 .numeroIdentificacion("123")
@@ -76,7 +76,7 @@ class AuthControllerTest {
         request.setTipoIdentificacion(TipoIdentificacionUsuarios.CedulaDeCiudadania);
         request.setNumeroIdentificacion("987654321");
         request.setEmail("nuevo@test.com");
-        request.setContraseña("password123");
+        request.setContraseña("password123!");
 
         doNothing().when(authService).crearUsuario(any(NuevoUsuarioRequest.class));
 
