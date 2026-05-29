@@ -230,10 +230,10 @@ const EducacionPage: React.FC = () => {
           addDateNotFutureError(errors, f.fechaTerminacionMaterias, `${prefix}: fecha de terminación de materias`);
           addDateNotFutureError(errors, f.fechaGrado, `${prefix}: fecha de grado`);
           addDateOrderError(
-            errors,
-            f.fechaTerminacionMaterias,
-            f.fechaGrado,
-            `${prefix}: la fecha de terminación de materias no puede ser posterior a la fecha de grado.`,
+              errors,
+              f.fechaTerminacionMaterias,
+              f.fechaGrado,
+              `${prefix}: la fecha de terminación de materias no puede ser posterior a la fecha de grado.`,
           );
         }
 
@@ -385,348 +385,432 @@ const EducacionPage: React.FC = () => {
     }
   };
 
+  // Helper para determinar si un campo debe estar deshabilitado en formaciones existentes
+  const isFormacionFieldDisabled = (field: keyof FormacionAcademica, hasId: boolean) => {
+    if (!hasId) return false; // nuevos registros siempre editables
+    // Campos que NO se pueden actualizar (solo al crear)
+    const nonUpdatableFields: (keyof FormacionAcademica)[] = [
+      "nivelAcademico",
+      "nivelFormacion",
+      "pais",
+      "institucionFormacionAcademica",
+      "tituloObtenido",
+      // "programaAcademico" sí se puede actualizar
+      // "areaConocimiento" sí se puede actualizar
+    ];
+    return nonUpdatableFields.includes(field);
+  };
+
+  const isIdiomaFieldDisabled = (field: keyof Idioma, hasId: boolean) => {
+    if (!hasId) return false;
+    // Solo el campo "certificado" se puede actualizar
+    const updatableFields: (keyof Idioma)[] = ["certificado"];
+    return !updatableFields.includes(field);
+  };
+
+  const isTrabajoFieldDisabled = (field: keyof EducacionTrabajo, hasId: boolean) => {
+    if (!hasId) return false;
+    // Solo el campo "diplomaActaCertificadoEstudio" se puede actualizar
+    const updatableFields: (keyof EducacionTrabajo)[] = ["diplomaActaCertificadoEstudio"];
+    return !updatableFields.includes(field);
+  };
+
   return (
-    <AppLayout title="Educación">
-      <div className="page-header animate-in">
-        <h2>Educación</h2>
-        <p>Registre formación académica, idiomas y educación para el trabajo.</p>
-      </div>
-
-      {loading && (
-        <div className="alert alert-info animate-in" style={{ marginBottom: 20 }}>
-          Cargando educación guardada...
+      <AppLayout title="Educación">
+        <div className="page-header animate-in">
+          <h2>Educación</h2>
+          <p>Registre formación académica, idiomas y educación para el trabajo.</p>
         </div>
-      )}
 
-      {saved && (
-        <div className="alert alert-success animate-in" style={{ marginBottom: 20 }}>
-          ✅ Información de educación guardada correctamente.
-        </div>
-      )}
-
-      {error && (
-        <div className="alert alert-danger animate-in" style={{ marginBottom: 20 }}>
-          {error}
-        </div>
-      )}
-
-      <div className="tabs animate-in">
-        {["Formación Académica", "Idiomas", "Educación para el Trabajo"].map((t, i) => (
-          <button key={t} type="button" className={`tab ${tab === i ? "active" : ""}`} onClick={() => setTab(i)}>{t}</button>
-        ))}
-      </div>
-
-      <form onSubmit={handleSave}>
-        {tab === 0 && (
-          <div className="animate-in">
-            <div className="alert alert-info" style={{ marginBottom: 16 }}>
-              Puede agregar varias formaciones. Guarde los cambios cuando termine de completar la información.
+        {loading && (
+            <div className="alert alert-info animate-in" style={{ marginBottom: 20 }}>
+              Cargando educación guardada...
             </div>
-            {formaciones.map((f, i) => (
-              <div key={f.id ?? f.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}> 
-                <div className="form-section-header" style={{ cursor: "default" }}>
-                  <div className="section-icon">🎓</div>
-                  <h3>Estudio #{i + 1}{f.id ? " — existente" : " — nuevo"}</h3>
-                  <div style={{ marginLeft: "auto" }}>
-                    {f.id ? (
-                      <span className="badge badge-green">Registrado</span>
-                    ) : (
-                      formaciones.length > 1 && (
-                        <button type="button" className="btn btn-danger btn-sm" onClick={() => setFormaciones(prev => prev.filter((_, idx) => idx !== i))}>
-                          Quitar borrador
-                        </button>
-                      )
-                    )}
-                  </div>
+        )}
+
+        {saved && (
+            <div className="alert alert-success animate-in" style={{ marginBottom: 20 }}>
+              ✅ Información de educación guardada correctamente.
+            </div>
+        )}
+
+        {error && (
+            <div className="alert alert-danger animate-in" style={{ marginBottom: 20 }}>
+              {error}
+            </div>
+        )}
+
+        <div className="tabs animate-in">
+          {["Formación Académica", "Idiomas", "Educación para el Trabajo"].map((t, i) => (
+              <button key={t} type="button" className={`tab ${tab === i ? "active" : ""}`} onClick={() => setTab(i)}>{t}</button>
+          ))}
+        </div>
+
+        <form onSubmit={handleSave}>
+          {tab === 0 && (
+              <div className="animate-in">
+                <div className="alert alert-info" style={{ marginBottom: 16 }}>
+                  Puede agregar varias formaciones. Guarde los cambios cuando termine de completar la información.
                 </div>
-                <div className="form-section-body">
-                  <div className="form-grid cols-3">
-                    <div className="form-group">
-                      <label className="form-label">Nivel académico <span className="required">*</span></label>
-                      <select className="form-select" required value={f.nivelAcademico} onChange={e => updateFormacion(i, "nivelAcademico", e.target.value)}>
-                        {Object.entries(NivelAcademicoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
+                {formaciones.map((f, i) => {
+                  const hasId = !!f.id;
+                  const isDisabled = (field: keyof FormacionAcademica) => isFormacionFieldDisabled(field, hasId);
+                  return (
+                      <div key={f.id ?? f.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}>
+                        <div className="form-section-header" style={{ cursor: "default" }}>
+                          <div className="section-icon">🎓</div>
+                          <h3>Estudio #{i + 1}{hasId ? " — existente" : " — nuevo"}</h3>
+                          <div style={{ marginLeft: "auto" }}>
+                            {hasId ? (
+                                <span className="badge badge-green">Registrado</span>
+                            ) : (
+                                formaciones.length > 1 && (
+                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => setFormaciones(prev => prev.filter((_, idx) => idx !== i))}>
+                                      Quitar borrador
+                                    </button>
+                                )
+                            )}
+                          </div>
+                        </div>
+                        <div className="form-section-body">
+                          <div className="form-grid cols-3">
+                            <div className="form-group">
+                              <label className="form-label">Nivel académico <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("nivelAcademico")}
+                                  value={f.nivelAcademico}
+                                  onChange={e => updateFormacion(i, "nivelAcademico", e.target.value)}
+                              >
+                                {Object.entries(NivelAcademicoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
 
-                    <div className="form-group">
-                      <label className="form-label">Nivel de formación <span className="required">*</span></label>
-                      <select className="form-select" required value={f.nivelFormacion} onChange={e => updateFormacion(i, "nivelFormacion", e.target.value)}>
-                        {Object.entries(NivelFormacionLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
+                            <div className="form-group">
+                              <label className="form-label">Nivel de formación <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("nivelFormacion")}
+                                  value={f.nivelFormacion}
+                                  onChange={e => updateFormacion(i, "nivelFormacion", e.target.value)}
+                              >
+                                {Object.entries(NivelFormacionLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
 
-                    <div className="form-group">
-                      <label className="form-label">Área de conocimiento</label>
-                      <select className="form-select" value={f.areaConocimiento} onChange={e => updateFormacion(i, "areaConocimiento", e.target.value)}>
-                        {Object.entries(AreaConocimientoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
+                            <div className="form-group">
+                              <label className="form-label">Área de conocimiento</label>
+                              <select className="form-select" value={f.areaConocimiento} onChange={e => updateFormacion(i, "areaConocimiento", e.target.value)}>
+                                {Object.entries(AreaConocimientoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
 
-                    <div className="form-group">
-                      <label className="form-label">País <span className="required">*</span></label>
-                      <input className="form-input" required value={f.pais} onChange={e => updateFormacion(i, "pais", e.target.value)} />
-                    </div>
+                            <div className="form-group">
+                              <label className="form-label">País <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("pais")}
+                                  value={f.pais}
+                                  onChange={e => updateFormacion(i, "pais", e.target.value)}
+                              />
+                            </div>
 
-                    <div className="form-group span-2">
-                      <label className="form-label">Institución <span className="required">*</span></label>
-                      <input className="form-input" required value={f.institucionFormacionAcademica} onChange={e => updateFormacion(i, "institucionFormacionAcademica", e.target.value)} placeholder="Ej: Universidad Nacional de Colombia" />
-                    </div>
+                            <div className="form-group span-2">
+                              <label className="form-label">Institución <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("institucionFormacionAcademica")}
+                                  value={f.institucionFormacionAcademica}
+                                  onChange={e => updateFormacion(i, "institucionFormacionAcademica", e.target.value)}
+                                  placeholder="Ej: Universidad Nacional de Colombia"
+                              />
+                            </div>
 
-                    <div className="form-group">
-                      <label className="form-label">Estado del estudio <span className="required">*</span></label>
-                      <select className="form-select" required value={f.estadoEstudio} onChange={e => updateFormacion(i, "estadoEstudio", e.target.value)}>
-                        {Object.entries(EstadoEstudioLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
+                            <div className="form-group">
+                              <label className="form-label">Estado del estudio <span className="required">*</span></label>
+                              <select className="form-select" required value={f.estadoEstudio} onChange={e => updateFormacion(i, "estadoEstudio", e.target.value)}>
+                                {Object.entries(EstadoEstudioLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
 
-                    <div className="form-group">
-                      <label className="form-label">Semestres aprobados</label>
-                      <input type="number" min={0} max={12} className="form-input" value={f.semestresAprobados ?? ""} onChange={e => updateFormacion(i, "semestresAprobados", e.target.value ? Number(e.target.value) : undefined)} />
-                    </div>
+                            <div className="form-group">
+                              <label className="form-label">Semestres aprobados</label>
+                              <input type="number" min={0} max={12} className="form-input" value={f.semestresAprobados ?? ""} onChange={e => updateFormacion(i, "semestresAprobados", e.target.value ? Number(e.target.value) : undefined)} />
+                            </div>
 
-                    <div className="form-group span-2">
-                      <label className="form-label">Programa académico</label>
-                      <input className="form-input" value={f.programaAcademico} onChange={e => updateFormacion(i, "programaAcademico", e.target.value)} placeholder="Ej: Ingeniería de Sistemas" />
-                    </div>
+                            <div className="form-group span-2">
+                              <label className="form-label">Programa académico</label>
+                              <input className="form-input" value={f.programaAcademico} onChange={e => updateFormacion(i, "programaAcademico", e.target.value)} placeholder="Ej: Ingeniería de Sistemas" />
+                            </div>
 
-                    <div className="form-group">
-                      <label className="form-label">Título obtenido <span className="required">*</span></label>
-                      <input className="form-input" required value={f.tituloObtenido} onChange={e => updateFormacion(i, "tituloObtenido", e.target.value)} placeholder="Ej: Ingeniero de Sistemas" />
-                    </div>
+                            <div className="form-group">
+                              <label className="form-label">Título obtenido <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("tituloObtenido")}
+                                  value={f.tituloObtenido}
+                                  onChange={e => updateFormacion(i, "tituloObtenido", e.target.value)}
+                                  placeholder="Ej: Ingeniero de Sistemas"
+                              />
+                            </div>
 
-                    <div className="form-group">
-                      <label className="form-label">Fecha terminación materias</label>
-                      <input type="date" className="form-input" disabled={f.estadoEstudio === EstadoEstudio.EnProceso} value={f.estadoEstudio === EstadoEstudio.EnProceso ? "" : f.fechaTerminacionMaterias ?? ""} onChange={e => updateFormacion(i, "fechaTerminacionMaterias", e.target.value)} />
-                    </div>
+                            <div className="form-group">
+                              <label className="form-label">Fecha terminación materias</label>
+                              <input
+                                  type="date"
+                                  className="form-input"
+                                  disabled={f.estadoEstudio === EstadoEstudio.EnProceso}
+                                  value={f.estadoEstudio === EstadoEstudio.EnProceso ? "" : f.fechaTerminacionMaterias ?? ""}
+                                  onChange={e => updateFormacion(i, "fechaTerminacionMaterias", e.target.value)}
+                              />
+                            </div>
 
-                    <div className="form-group">
-                      <label className="form-label">Fecha de grado</label>
-                      <input type="date" className="form-input" disabled={f.estadoEstudio === EstadoEstudio.EnProceso} min={f.fechaTerminacionMaterias || undefined} value={f.estadoEstudio === EstadoEstudio.EnProceso ? "" : f.fechaGrado ?? ""} onChange={e => updateFormacion(i, "fechaGrado", e.target.value)} />
-                    </div>
+                            <div className="form-group">
+                              <label className="form-label">Fecha de grado</label>
+                              <input
+                                  type="date"
+                                  className="form-input"
+                                  disabled={f.estadoEstudio === EstadoEstudio.EnProceso}
+                                  min={f.fechaTerminacionMaterias || undefined}
+                                  value={f.estadoEstudio === EstadoEstudio.EnProceso ? "" : f.fechaGrado ?? ""}
+                                  onChange={e => updateFormacion(i, "fechaGrado", e.target.value)}
+                              />
+                            </div>
 
-                    <div className="form-group span-2">
-                      <FileUploadField
-                        label="Soporte de educación formal"
-                        value={f.archivoEducacionFormal}
-                        onChange={(url) => updateFormacion(i, "archivoEducacionFormal", url)}
-                      />
-                    </div>
+                            <div className="form-group span-2">
+                              <FileUploadField
+                                  label="Soporte de educación formal"
+                                  value={f.archivoEducacionFormal}
+                                  onChange={(url) => updateFormacion(i, "archivoEducacionFormal", url)}
+                              />
+                            </div>
 
-                    <div className="form-group span-2">
-                      <FileUploadField
-                        label="Tarjeta profesional"
-                        value={f.archivoTarjetaProfesional ?? f.archivoTarjetaProfesioal}
-                        onChange={(url) => {
-                          updateFormacion(i, "archivoTarjetaProfesional", url);
-                          updateFormacion(i, "archivoTarjetaProfesioal", url);
-                        }}
-                      />
-                    </div>
-                  </div>
+                            <div className="form-group span-2">
+                              <FileUploadField
+                                  label="Tarjeta profesional"
+                                  value={f.archivoTarjetaProfesional ?? f.archivoTarjetaProfesioal}
+                                  onChange={(url) => {
+                                    updateFormacion(i, "archivoTarjetaProfesional", url);
+                                    updateFormacion(i, "archivoTarjetaProfesioal", url);
+                                  }}
+                              />
+                            </div>
+                          </div>
 
-                  <div className="form-checkbox-group" style={{ marginTop: 12 }}>
-                    <input type="checkbox" id={`conv-${i}`} checked={f.estudioConvalidado} onChange={e => updateFormacion(i, "estudioConvalidado", e.target.checked)} />
-                    <label htmlFor={`conv-${i}`}>¿Estudio convalidado?</label>
-                  </div>
+                          <div className="form-checkbox-group" style={{ marginTop: 12 }}>
+                            <input type="checkbox" id={`conv-${i}`} checked={f.estudioConvalidado} onChange={e => updateFormacion(i, "estudioConvalidado", e.target.checked)} />
+                            <label htmlFor={`conv-${i}`}>¿Estudio convalidado?</label>
+                          </div>
 
-                  {f.estudioConvalidado && (
-                    <div className="form-grid cols-3" style={{ marginTop: 12 }}>
-                      <div className="form-group">
-                        <label className="form-label">Fecha de convalidación <span className="required">*</span></label>
-                        <input type="date" className="form-input" required value={f.fechaConvalidacion ?? ""} onChange={e => updateFormacion(i, "fechaConvalidacion", e.target.value)} />
+                          {f.estudioConvalidado && (
+                              <div className="form-grid cols-3" style={{ marginTop: 12 }}>
+                                <div className="form-group">
+                                  <label className="form-label">Fecha de convalidación <span className="required">*</span></label>
+                                  <input type="date" className="form-input" required value={f.fechaConvalidacion ?? ""} onChange={e => updateFormacion(i, "fechaConvalidacion", e.target.value)} />
+                                </div>
+                              </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                  )})}
+
+                <button type="button" className="btn btn-secondary" onClick={() => setFormaciones(prev => [...prev, emptyFormacion()])}>
+                  + Agregar otra formación
+                </button>
               </div>
-            ))}
+          )}
 
-            <button type="button" className="btn btn-secondary" onClick={() => setFormaciones(prev => [...prev, emptyFormacion()])}>
-              + Agregar otra formación
-            </button>
-          </div>
-        )}
+          {tab === 1 && (
+              <div className="animate-in">
+                <div className="alert alert-info" style={{ marginBottom: 16 }}>
+                  Puede agregar varios idiomas. Para cambiar un idioma ya guardado, solo puede modificar el certificado.
+                </div>
+                {idiomas.length === 0 && (
+                    <div className="empty-state card" style={{ padding: "40px" }}>
+                      <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>🌐</div>
+                      <p className="text-muted">No ha registrado idiomas. Agregue uno a continuación.</p>
+                    </div>
+                )}
 
-        {tab === 1 && (
-          <div className="animate-in">
-            <div className="alert alert-info" style={{ marginBottom: 16 }}>
-              Puede agregar varios idiomas. Para cambiar un idioma ya guardado, actualice la información disponible y guarde los cambios.
+                {idiomas.map((idioma, i) => {
+                  const hasId = !!idioma.id;
+                  const isDisabled = (field: keyof Idioma) => isIdiomaFieldDisabled(field, hasId);
+                  return (
+                      <div key={idioma.id ?? idioma.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}>
+                        <div className="form-section-header" style={{ cursor: "default" }}>
+                          <div className="section-icon">🌐</div>
+                          <h3>Idioma #{i + 1}{hasId ? " — existente" : " — nuevo"}</h3>
+                          <div style={{ marginLeft: "auto" }}>
+                            {hasId ? (
+                                <span className="badge badge-green">Registrado</span>
+                            ) : (
+                                <button type="button" className="btn btn-danger btn-sm" onClick={() => setIdiomas(prev => prev.filter((_, idx) => idx !== i))}>
+                                  Quitar borrador
+                                </button>
+                            )}
+                          </div>
+                        </div>
+                        <div className="form-section-body">
+                          <div className="form-grid cols-3">
+                            <div className="form-group">
+                              <label className="form-label">Idioma <span className="required">*</span></label>
+                              <input className="form-input" required disabled={isDisabled("idioma")} value={idioma.idioma} onChange={e => updateIdioma(i, "idioma", e.target.value)} placeholder="Ej: Inglés, Francés" />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Conversación <span className="required">*</span></label>
+                              <select className="form-select" required disabled={isDisabled("conversacion")} value={idioma.conversacion} onChange={e => updateIdioma(i, "conversacion", e.target.value)}>
+                                {Object.entries(IdiomaNivelLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Lectura <span className="required">*</span></label>
+                              <select className="form-select" required disabled={isDisabled("lectura")} value={idioma.lectura} onChange={e => updateIdioma(i, "lectura", e.target.value)}>
+                                {Object.entries(IdiomaNivelLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Redacción <span className="required">*</span></label>
+                              <select className="form-select" required disabled={isDisabled("redaccion")} value={idioma.redaccion} onChange={e => updateIdioma(i, "redaccion", e.target.value)}>
+                                {Object.entries(IdiomaNivelLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Fecha del certificado <span className="required">*</span></label>
+                              <input type="date" className="form-input" required disabled={isDisabled("fechaCertificado")} value={idioma.fechaCertificado} onChange={e => updateIdioma(i, "fechaCertificado", e.target.value)} />
+                            </div>
+
+                            <div className="form-group">
+                              <FileUploadField
+                                  label="Certificado"
+                                  value={idioma.certificado}
+                                  onChange={(url) => updateIdioma(i, "certificado", url)}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="form-checkbox-group" style={{ marginTop: 12 }}>
+                            <input type="checkbox" id={`native-${i}`} checked={idioma.lenguaNativa} onChange={e => updateIdioma(i, "lenguaNativa", e.target.checked)} disabled={isDisabled("lenguaNativa")} />
+                            <label htmlFor={`native-${i}`}>¿Es lengua nativa?</label>
+                          </div>
+                        </div>
+                      </div>
+                  )})}
+
+                <button type="button" className="btn btn-secondary" onClick={() => setIdiomas(prev => [...prev, emptyIdioma()])}>
+                  + Agregar idioma
+                </button>
+              </div>
+          )}
+
+          {tab === 2 && (
+              <div className="animate-in">
+                <div className="alert alert-info" style={{ marginBottom: 16 }}>
+                  Puede agregar varias capacitaciones. Para cambiar una capacitación ya guardada, solo puede modificar el diploma, acta o certificado.
+                </div>
+                {trabajos.length === 0 && (
+                    <div className="empty-state card" style={{ padding: "40px" }}>
+                      <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>📚</div>
+                      <p className="text-muted">No ha registrado educación para el trabajo.</p>
+                    </div>
+                )}
+
+                {trabajos.map((trabajo, i) => {
+                  const hasId = !!trabajo.id;
+                  const isDisabled = (field: keyof EducacionTrabajo) => isTrabajoFieldDisabled(field, hasId);
+                  return (
+                      <div key={trabajo.id ?? trabajo.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}>
+                        <div className="form-section-header" style={{ cursor: "default" }}>
+                          <div className="section-icon">📚</div>
+                          <h3>Capacitación #{i + 1}{hasId ? " — existente" : " — nuevo"}</h3>
+                          <div style={{ marginLeft: "auto" }}>
+                            {hasId ? (
+                                <span className="badge badge-green">Registrado</span>
+                            ) : (
+                                <button type="button" className="btn btn-danger btn-sm" onClick={() => setTrabajos(prev => prev.filter((_, idx) => idx !== i))}>
+                                  Quitar borrador
+                                </button>
+                            )}
+                          </div>
+                        </div>
+                        <div className="form-section-body">
+                          <div className="form-grid cols-3">
+                            <div className="form-group">
+                              <label className="form-label">Nombre <span className="required">*</span></label>
+                              <input className="form-input" required disabled={isDisabled("nombre")} value={trabajo.nombre} onChange={e => updateTrabajo(i, "nombre", e.target.value)} placeholder="Ej: Diplomado en gestión pública" />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Institución <span className="required">*</span></label>
+                              <input className="form-input" required disabled={isDisabled("institucion")} value={trabajo.institucion} onChange={e => updateTrabajo(i, "institucion", e.target.value)} />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">País <span className="required">*</span></label>
+                              <input className="form-input" required disabled={isDisabled("pais")} value={trabajo.pais} onChange={e => updateTrabajo(i, "pais", e.target.value)} />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Fecha finalización <span className="required">*</span></label>
+                              <input type="date" className="form-input" required disabled={isDisabled("fechaFinalizacion")} value={trabajo.fechaFinalizacion} onChange={e => updateTrabajo(i, "fechaFinalizacion", e.target.value)} />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Total horas <span className="required">*</span></label>
+                              <input type="number" min={1} className="form-input" required disabled={isDisabled("numeroTotalHoras")} value={trabajo.numeroTotalHoras} onChange={e => updateTrabajo(i, "numeroTotalHoras", Number(e.target.value))} />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Medio de capacitación <span className="required">*</span></label>
+                              <select className="form-select" required disabled={isDisabled("medioCapacitacion")} value={trabajo.medioCapacitacion} onChange={e => updateTrabajo(i, "medioCapacitacion", e.target.value)}>
+                                {Object.entries(medioCapacitacionLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Modalidad <span className="required">*</span></label>
+                              <select className="form-select" required disabled={isDisabled("modalidad")} value={trabajo.modalidad} onChange={e => updateTrabajo(i, "modalidad", e.target.value)}>
+                                {Object.entries(modalidadLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group span-2">
+                              <FileUploadField
+                                  label="Diploma / acta / certificado"
+                                  required
+                                  value={trabajo.diplomaActaCertificadoEstudio}
+                                  onChange={(url) => updateTrabajo(i, "diplomaActaCertificadoEstudio", url)}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  )})}
+
+                <button type="button" className="btn btn-secondary" onClick={() => setTrabajos(prev => [...prev, emptyEducacionTrabajo()])}>
+                  + Agregar educación para el trabajo
+                </button>
+              </div>
+          )}
+
+          <div className="flex justify-between items-center mt-4">
+            <span />
+            <div className="flex gap-2">
+              <button type="submit" className="btn btn-primary" disabled={saving}>
+                {saving ? "Guardando..." : "✓ Guardar sección"}
+              </button>
             </div>
-            {idiomas.length === 0 && (
-              <div className="empty-state card" style={{ padding: "40px" }}>
-                <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>🌐</div>
-                <p className="text-muted">No ha registrado idiomas. Agregue uno a continuación.</p>
-              </div>
-            )}
-
-            {idiomas.map((id, i) => (
-              <div key={id.id ?? id.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}> 
-                <div className="form-section-header" style={{ cursor: "default" }}>
-                  <div className="section-icon">🌐</div>
-                  <h3>Idioma #{i + 1}{id.id ? " — existente" : " — nuevo"}</h3>
-                  <div style={{ marginLeft: "auto" }}>
-                    {id.id ? (
-                      <span className="badge badge-green">Registrado</span>
-                    ) : (
-                      <button type="button" className="btn btn-danger btn-sm" onClick={() => setIdiomas(prev => prev.filter((_, idx) => idx !== i))}>
-                        Quitar borrador
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div className="form-section-body">
-                  <div className="form-grid cols-3">
-                    <div className="form-group">
-                      <label className="form-label">Idioma <span className="required">*</span></label>
-                      <input className="form-input" required value={id.idioma} onChange={e => updateIdioma(i, "idioma", e.target.value)} placeholder="Ej: Inglés, Francés" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Conversación <span className="required">*</span></label>
-                      <select className="form-select" required value={id.conversacion} onChange={e => updateIdioma(i, "conversacion", e.target.value)}>
-                        {Object.entries(IdiomaNivelLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Lectura <span className="required">*</span></label>
-                      <select className="form-select" required value={id.lectura} onChange={e => updateIdioma(i, "lectura", e.target.value)}>
-                        {Object.entries(IdiomaNivelLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Redacción <span className="required">*</span></label>
-                      <select className="form-select" required value={id.redaccion} onChange={e => updateIdioma(i, "redaccion", e.target.value)}>
-                        {Object.entries(IdiomaNivelLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Fecha del certificado <span className="required">*</span></label>
-                      <input type="date" className="form-input" required value={id.fechaCertificado} onChange={e => updateIdioma(i, "fechaCertificado", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <FileUploadField
-                        label="Certificado"
-                        value={id.certificado}
-                        onChange={(url) => updateIdioma(i, "certificado", url)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-checkbox-group" style={{ marginTop: 12 }}>
-                    <input type="checkbox" id={`native-${i}`} checked={id.lenguaNativa} onChange={e => updateIdioma(i, "lenguaNativa", e.target.checked)} />
-                    <label htmlFor={`native-${i}`}>¿Es lengua nativa?</label>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <button type="button" className="btn btn-secondary" onClick={() => setIdiomas(prev => [...prev, emptyIdioma()])}>
-              + Agregar idioma
-            </button>
           </div>
-        )}
-
-        {tab === 2 && (
-          <div className="animate-in">
-            <div className="alert alert-info" style={{ marginBottom: 16 }}>
-              Puede agregar varias capacitaciones. Para cambiar una capacitación ya guardada, actualice la información disponible y guarde los cambios.
-            </div>
-            {trabajos.length === 0 && (
-              <div className="empty-state card" style={{ padding: "40px" }}>
-                <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>📚</div>
-                <p className="text-muted">No ha registrado educación para el trabajo.</p>
-              </div>
-            )}
-
-            {trabajos.map((trabajo, i) => (
-              <div key={trabajo.id ?? trabajo.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}> 
-                <div className="form-section-header" style={{ cursor: "default" }}>
-                  <div className="section-icon">📚</div>
-                  <h3>Capacitación #{i + 1}{trabajo.id ? " — existente" : " — nuevo"}</h3>
-                  <div style={{ marginLeft: "auto" }}>
-                    {trabajo.id ? (
-                      <span className="badge badge-green">Registrado</span>
-                    ) : (
-                      <button type="button" className="btn btn-danger btn-sm" onClick={() => setTrabajos(prev => prev.filter((_, idx) => idx !== i))}>
-                        Quitar borrador
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div className="form-section-body">
-                  <div className="form-grid cols-3">
-                    <div className="form-group">
-                      <label className="form-label">Nombre <span className="required">*</span></label>
-                      <input className="form-input" required value={trabajo.nombre} onChange={e => updateTrabajo(i, "nombre", e.target.value)} placeholder="Ej: Diplomado en gestión pública" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Institución <span className="required">*</span></label>
-                      <input className="form-input" required value={trabajo.institucion} onChange={e => updateTrabajo(i, "institucion", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">País <span className="required">*</span></label>
-                      <input className="form-input" required value={trabajo.pais} onChange={e => updateTrabajo(i, "pais", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Fecha finalización <span className="required">*</span></label>
-                      <input type="date" className="form-input" required value={trabajo.fechaFinalizacion} onChange={e => updateTrabajo(i, "fechaFinalizacion", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Total horas <span className="required">*</span></label>
-                      <input type="number" min={1} className="form-input" required value={trabajo.numeroTotalHoras} onChange={e => updateTrabajo(i, "numeroTotalHoras", Number(e.target.value))} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Medio de capacitación <span className="required">*</span></label>
-                      <select className="form-select" required value={trabajo.medioCapacitacion} onChange={e => updateTrabajo(i, "medioCapacitacion", e.target.value)}>
-                        {Object.entries(medioCapacitacionLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Modalidad <span className="required">*</span></label>
-                      <select className="form-select" required value={trabajo.modalidad} onChange={e => updateTrabajo(i, "modalidad", e.target.value)}>
-                        {Object.entries(modalidadLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group span-2">
-                      <FileUploadField
-                        label="Diploma / acta / certificado"
-                        required
-                        value={trabajo.diplomaActaCertificadoEstudio}
-                        onChange={(url) => updateTrabajo(i, "diplomaActaCertificadoEstudio", url)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <button type="button" className="btn btn-secondary" onClick={() => setTrabajos(prev => [...prev, emptyEducacionTrabajo()])}>
-              + Agregar educación para el trabajo
-            </button>
-          </div>
-        )}
-
-        <div className="flex justify-between items-center mt-4">
-          <span />
-          <div className="flex gap-2">
-            <button type="submit" className="btn btn-primary" disabled={saving}>
-              {saving ? "Guardando..." : "✓ Guardar sección"}
-            </button>
-          </div>
-        </div>
-      </form>
-    </AppLayout>
+        </form>
+      </AppLayout>
   );
 };
 

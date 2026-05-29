@@ -93,13 +93,13 @@ a:hover { text-decoration: underline; }
 .flag-bar {
   height: 5px;
   background: linear-gradient(
-    to right,
-    var(--col-amarillo) 0%,
-    var(--col-amarillo) 50%,
-    var(--col-azul) 50%,
-    var(--col-azul) 75%,
-    var(--col-rojo) 75%,
-    var(--col-rojo) 100%
+          to right,
+          var(--col-amarillo) 0%,
+          var(--col-amarillo) 50%,
+          var(--col-azul) 50%,
+          var(--col-azul) 75%,
+          var(--col-rojo) 75%,
+          var(--col-rojo) 100%
   );
   flex-shrink: 0;
 }
@@ -506,6 +506,15 @@ a:hover { text-decoration: underline; }
 
 .form-textarea { min-height: 90px; resize: vertical; }
 
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: #f5f5f5;   /* gris muy claro */
+  color: #6c757d;              /* texto gris */
+  cursor: not-allowed;         /* cursor de prohibido */
+  opacity: 0.9;
+}
+
 .form-checkbox-group {
   display: flex;
   align-items: center;
@@ -743,8 +752,8 @@ a:hover { text-decoration: underline; }
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 20% 20%, rgba(26,86,196,.4) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(0,48,135,.5) 0%, transparent 50%);
+          radial-gradient(circle at 20% 20%, rgba(26,86,196,.4) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(0,48,135,.5) 0%, transparent 50%);
   pointer-events: none;
 }
 

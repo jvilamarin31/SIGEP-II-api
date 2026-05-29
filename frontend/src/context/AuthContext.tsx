@@ -21,10 +21,10 @@ const decodeJwtPayload = (token: string): JwtPayload | null => {
     const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
     const paddedBase64 = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
     const jsonPayload = decodeURIComponent(
-      atob(paddedBase64)
-        .split("")
-        .map((char) => `%${`00${char.charCodeAt(0).toString(16)}`.slice(-2)}`)
-        .join("")
+        atob(paddedBase64)
+            .split("")
+            .map((char) => `%${`00${char.charCodeAt(0).toString(16)}`.slice(-2)}`)
+            .join("")
     );
 
     return JSON.parse(jsonPayload) as JwtPayload;
@@ -91,8 +91,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, hasRole }}>
-      {children}
-    </AuthContext.Provider>
+      <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, hasRole }}>
+        {children}
+      </AuthContext.Provider>
   );
 };

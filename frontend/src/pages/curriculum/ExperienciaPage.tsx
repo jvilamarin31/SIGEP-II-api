@@ -33,7 +33,6 @@ import {
 const toDateInput = (value?: string) => value ? value.slice(0, 10) : "";
 const createClientId = () => `tmp-${crypto.randomUUID()}`;
 
-
 const emptyExp = (): ExperienciaLaboral => ({
   clientId: createClientId(),
   tipoEntidad: TipoEntidad.Publica,
@@ -160,6 +159,48 @@ const ExperienciaPage: React.FC = () => {
     const timer = window.setTimeout(() => void cargarExperiencia(), 0);
     return () => window.clearTimeout(timer);
   }, [cargarExperiencia]);
+
+  // Helpers para determinar si un campo debe estar deshabilitado en registros existentes
+  const isExpFieldDisabled = (field: keyof ExperienciaLaboral, hasId: boolean) => {
+    if (!hasId) return false;
+    // Campos que NO se pueden actualizar (solo al crear)
+    const nonUpdatableFields: (keyof ExperienciaLaboral)[] = [
+      "tipoEntidad",
+      "nombreEntidad",
+      "pais",
+      "departamento",
+      "municipio",
+      "direccionEntidad",
+      "dependencia",
+      "nivelJerarquiaEmpleo",
+      "cargo",
+      "trabajoActual",
+      "fechaIngreso",
+      "jornadaLaboral",
+      "tiempoExperiencia",
+    ];
+    return nonUpdatableFields.includes(field);
+  };
+
+  const isDocenteFieldDisabled = (field: keyof ExperienciaLaboralDocente, hasId: boolean) => {
+    if (!hasId) return false;
+    // Campos que NO se pueden actualizar (solo al crear)
+    const nonUpdatableFields: (keyof ExperienciaLaboralDocente)[] = [
+      "tipoInstitucion",
+      "nombreInstitucion",
+      "pais",
+      "departamento",
+      "municipio",
+      "nivelAcademico",
+      "areaConocimiento",
+      "tipoZona",
+      "trabajoActual",
+      "fechaIngreso",
+      "jornadaLaboral",
+      "tiempoExperiencia",
+    ];
+    return nonUpdatableFields.includes(field);
+  };
 
   const updateExp = (i: number, field: keyof ExperienciaLaboral, value: string | boolean | number | undefined) => {
     setExps(prev => prev.map((item, idx) => {
@@ -364,345 +405,577 @@ const ExperienciaPage: React.FC = () => {
   };
 
   return (
-    <AppLayout title="Experiencia Laboral">
-      <div className="page-header animate-in">
-        <h2>Experiencia Laboral</h2>
-        <p>Registre su historial de empleo en el sector público, privado y docente.</p>
-      </div>
-
-      {loading && (
-        <div className="alert alert-info animate-in" style={{ marginBottom: 20 }}>
-          Cargando experiencia guardada...
+      <AppLayout title="Experiencia Laboral">
+        <div className="page-header animate-in">
+          <h2>Experiencia Laboral</h2>
+          <p>Registre su historial de empleo en el sector público, privado y docente.</p>
         </div>
-      )}
 
-      {saved && (
-        <div className="alert alert-success animate-in" style={{ marginBottom: 20 }}>
-          ✅ Experiencia laboral guardada correctamente.
-        </div>
-      )}
-
-      {error && (
-        <div className="alert alert-danger animate-in" style={{ marginBottom: 20 }}>
-          {error}
-        </div>
-      )}
-
-      <div className="tabs animate-in">
-        {["Experiencia General", "Experiencia Docente"].map((t, i) => (
-          <button key={t} type="button" className={`tab ${tab === i ? "active" : ""}`} onClick={() => setTab(i)}>{t}</button>
-        ))}
-      </div>
-
-      <form onSubmit={handleSave}>
-        {tab === 0 && (
-          <div className="animate-in">
-            <div className="alert alert-info" style={{ marginBottom: 16 }}>
-              Puede agregar varias experiencias laborales. Para cambiar una experiencia ya guardada, actualice la información disponible y guarde los cambios.
+        {loading && (
+            <div className="alert alert-info animate-in" style={{ marginBottom: 20 }}>
+              Cargando experiencia guardada...
             </div>
-            {exps.map((exp, i) => (
-              <div key={exp.id ?? exp.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}> 
-                <div className="form-section-header" style={{ cursor: "default" }}>
-                  <div className="section-icon">💼</div>
-                  <h3>Empleo #{i + 1}{exp.id ? " — existente" : " — nuevo"}{exp.cargo ? ` — ${exp.cargo}` : ""}</h3>
-                  <div style={{ marginLeft: "auto" }}>
-                    {exp.id ? (
-                      <span className="badge badge-green">Registrado</span>
-                    ) : (
-                      exps.length > 1 && (
-                        <button type="button" className="btn btn-danger btn-sm" onClick={() => setExps(p => p.filter((_, idx) => idx !== i))}>
-                          Quitar borrador
-                        </button>
-                      )
-                    )}
-                  </div>
-                </div>
-                <div className="form-section-body">
-                  <div className="form-grid cols-3">
-                    <div className="form-group">
-                      <label className="form-label">Tipo de entidad <span className="required">*</span></label>
-                      <select className="form-select" required value={exp.tipoEntidad} onChange={e => updateExp(i, "tipoEntidad", e.target.value)}>
-                        {Object.entries(TipoEntidadLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group span-2">
-                      <label className="form-label">Nombre de la entidad / empresa <span className="required">*</span></label>
-                      <input className="form-input" required value={exp.nombreEntidad} onChange={e => updateExp(i, "nombreEntidad", e.target.value)} placeholder="Ej: Ministerio de Hacienda" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">País <span className="required">*</span></label>
-                      <input className="form-input" required value={exp.pais} onChange={e => updateExp(i, "pais", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Departamento <span className="required">*</span></label>
-                      <input className="form-input" required value={exp.departamento} onChange={e => updateExp(i, "departamento", e.target.value)} placeholder="Ej: Bogotá D.C." />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Municipio <span className="required">*</span></label>
-                      <input className="form-input" required value={exp.municipio} onChange={e => updateExp(i, "municipio", e.target.value)} placeholder="Ej: Bogotá" />
-                    </div>
-
-                    <div className="form-group span-2">
-                      <label className="form-label">Dirección entidad <span className="required">*</span></label>
-                      <input className="form-input" required value={exp.direccionEntidad} onChange={e => updateExp(i, "direccionEntidad", e.target.value)} placeholder="Ej: Calle 26 # 13-19" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Teléfono entidad</label>
-                      <input className="form-input" value={exp.telefono ?? ""} onChange={e => updateExp(i, "telefono", e.target.value)} placeholder="Ej: 6012345678" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Cargo <span className="required">*</span></label>
-                      <input className="form-input" required value={exp.cargo} onChange={e => updateExp(i, "cargo", e.target.value)} placeholder="Ej: Analista de Sistemas" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Nivel jerárquico <span className="required">*</span></label>
-                      <select className="form-select" required value={exp.nivelJerarquiaEmpleo} onChange={e => updateExp(i, "nivelJerarquiaEmpleo", e.target.value)}>
-                        {Object.entries(NivelJerarquicoEmpleoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Dependencia <span className="required">*</span></label>
-                      <input className="form-input" required value={exp.dependencia} onChange={e => updateExp(i, "dependencia", e.target.value)} placeholder="Ej: Dirección de TI" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Fecha de ingreso <span className="required">*</span></label>
-                      <input type="date" className="form-input" required value={exp.fechaIngreso} onChange={e => updateExp(i, "fechaIngreso", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">¿Trabajo actual? <span className="required">*</span></label>
-                      <select className="form-select" value={String(exp.trabajoActual)} onChange={e => updateExp(i, "trabajoActual", e.target.value === "true")}>
-                        <option value="false">No</option>
-                        <option value="true">Sí</option>
-                      </select>
-                    </div>
-
-                    {!exp.trabajoActual && (
-                      <div className="form-group">
-                        <label className="form-label">Fecha de retiro</label>
-                        <input type="date" className="form-input" min={exp.fechaIngreso || undefined} value={exp.fechaRetiro ?? ""} onChange={e => updateExp(i, "fechaRetiro", e.target.value)} />
-                      </div>
-                    )}
-
-                    <div className="form-group">
-                      <label className="form-label">Jornada laboral <span className="required">*</span></label>
-                      <select className="form-select" required value={exp.jornadaLaboral} onChange={e => updateExp(i, "jornadaLaboral", e.target.value)}>
-                        {Object.entries(JornadaLaboralLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Horas promedio / mes</label>
-                      <input type="number" className="form-input" value={exp.horasPromedioMes ?? 0} onChange={e => updateExp(i, "horasPromedioMes", Number(e.target.value))} min={1} max={744} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Tiempo experiencia <span className="required">*</span></label>
-                      <input type="number" className="form-input" required value={exp.tiempoExperiencia} onChange={e => updateExp(i, "tiempoExperiencia", Number(e.target.value))} min={1} max={1000000000} />
-                    </div>
-
-                    {!exp.trabajoActual && (
-                      <div className="form-group span-3">
-                        <label className="form-label">Motivo de retiro</label>
-                        <input className="form-input" value={exp.motivoRetiro ?? ""} onChange={e => updateExp(i, "motivoRetiro", e.target.value)} placeholder="Opcional" />
-                      </div>
-                    )}
-
-                    <div className="form-group span-2">
-                      <FileUploadField
-                        label="Certificado laboral"
-                        value={exp.certificadoLaboral}
-                        onChange={(url) => updateExp(i, "certificadoLaboral", url)}
-                      />
-                    </div>
-
-                    <div className="form-checkbox-group" style={{ marginTop: 12 }}>
-                      <input type="checkbox" id={`exp-cert-${i}`} checked={Boolean(exp.documentoVerificado)} onChange={e => updateExp(i, "documentoVerificado", e.target.checked)} />
-                      <label htmlFor={`exp-cert-${i}`}>Certificado verificado</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <button type="button" className="btn btn-secondary" onClick={() => setExps(p => [...p, emptyExp()])}>
-              + Agregar otra experiencia
-            </button>
-          </div>
         )}
 
-        {tab === 1 && (
-          <div className="animate-in">
-            <div className="alert alert-info" style={{ marginBottom: 16 }}>
-              Puede agregar varias experiencias docentes. Para cambiar una experiencia ya guardada, actualice la información disponible y guarde los cambios.
+        {saved && (
+            <div className="alert alert-success animate-in" style={{ marginBottom: 20 }}>
+              ✅ Experiencia laboral guardada correctamente.
             </div>
-            {docentes.length === 0 && (
-              <div className="card" style={{ padding: "40px", textAlign: "center", marginBottom: 16 }}>
-                <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>🏫</div>
-                <p className="text-muted">No ha registrado experiencia docente.</p>
-              </div>
-            )}
-
-            {docentes.map((doc, i) => (
-              <div key={doc.id ?? doc.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}> 
-                <div className="form-section-header" style={{ cursor: "default" }}>
-                  <div className="section-icon">🏫</div>
-                  <h3>Docencia #{i + 1}{doc.id ? " — existente" : " — nuevo"}{doc.nombreInstitucion ? ` — ${doc.nombreInstitucion}` : ""}</h3>
-                  <div style={{ marginLeft: "auto" }}>
-                    {doc.id ? (
-                      <span className="badge badge-green">Registrado</span>
-                    ) : (
-                      <button type="button" className="btn btn-danger btn-sm" onClick={() => setDocentes(p => p.filter((_, idx) => idx !== i))}>
-                        Quitar borrador
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div className="form-section-body">
-                  <div className="form-grid cols-3">
-                    <div className="form-group">
-                      <label className="form-label">Tipo de institución <span className="required">*</span></label>
-                      <select className="form-select" required value={doc.tipoInstitucion} onChange={e => updateDocente(i, "tipoInstitucion", e.target.value)}>
-                        {Object.entries(TipoInstitucionLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group span-2">
-                      <label className="form-label">Nombre de la institución <span className="required">*</span></label>
-                      <input className="form-input" required value={doc.nombreInstitucion} onChange={e => updateDocente(i, "nombreInstitucion", e.target.value)} placeholder="Ej: Universidad Nacional de Colombia" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">País <span className="required">*</span></label>
-                      <input className="form-input" required value={doc.pais} onChange={e => updateDocente(i, "pais", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Departamento <span className="required">*</span></label>
-                      <input className="form-input" required value={doc.departamento} onChange={e => updateDocente(i, "departamento", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Municipio <span className="required">*</span></label>
-                      <input className="form-input" required value={doc.municipio} onChange={e => updateDocente(i, "municipio", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Nivel académico <span className="required">*</span></label>
-                      <select className="form-select" required value={doc.nivelAcademico} onChange={e => updateDocente(i, "nivelAcademico", e.target.value)}>
-                        {Object.entries(NivelAcademicoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Área de conocimiento <span className="required">*</span></label>
-                      <select className="form-select" required value={doc.areaConocimiento} onChange={e => updateDocente(i, "areaConocimiento", e.target.value)}>
-                        {Object.entries(AreaConocimientoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Materia impartida</label>
-                      <input className="form-input" value={doc.materiaImpartida ?? ""} onChange={e => updateDocente(i, "materiaImpartida", e.target.value)} placeholder="Ej: Cálculo I" />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Fecha de ingreso <span className="required">*</span></label>
-                      <input type="date" className="form-input" required value={doc.fechaIngreso} onChange={e => updateDocente(i, "fechaIngreso", e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">¿Trabajo actual? <span className="required">*</span></label>
-                      <select className="form-select" value={String(doc.trabajoActual)} onChange={e => updateDocente(i, "trabajoActual", e.target.value === "true")}>
-                        <option value="false">No</option>
-                        <option value="true">Sí</option>
-                      </select>
-                    </div>
-
-                    {!doc.trabajoActual && (
-                      <div className="form-group">
-                        <label className="form-label">Fecha de terminación</label>
-                        <input type="date" className="form-input" min={doc.fechaIngreso || undefined} value={doc.fechaTerminacion ?? ""} onChange={e => updateDocente(i, "fechaTerminacion", e.target.value)} />
-                      </div>
-                    )}
-
-                    <div className="form-group">
-                      <label className="form-label">Tipo de zona <span className="required">*</span></label>
-                      <select className="form-select" required value={doc.tipoZona} onChange={e => updateDocente(i, "tipoZona", e.target.value)}>
-                        {Object.entries(TipoZonaLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Jornada laboral <span className="required">*</span></label>
-                      <select className="form-select" required value={doc.jornadaLaboral} onChange={e => updateDocente(i, "jornadaLaboral", e.target.value)}>
-                        {Object.entries(JornadaLaboralLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Horas promedio / mes</label>
-                      <input type="number" className="form-input" value={doc.horasPromedioMes ?? 0} onChange={e => updateDocente(i, "horasPromedioMes", Number(e.target.value))} min={1} max={744} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Tiempo experiencia <span className="required">*</span></label>
-                      <input type="number" className="form-input" required value={doc.tiempoExperiencia} onChange={e => updateDocente(i, "tiempoExperiencia", Number(e.target.value))} min={1} max={1000000000} />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label">Teléfono</label>
-                      <input className="form-input" value={doc.telefono ?? ""} onChange={e => updateDocente(i, "telefono", e.target.value)} />
-                    </div>
-
-                    {!doc.trabajoActual && (
-                      <div className="form-group span-2">
-                        <label className="form-label">Motivo de retiro</label>
-                        <input className="form-input" value={doc.motivoRetiro ?? ""} onChange={e => updateDocente(i, "motivoRetiro", e.target.value)} />
-                      </div>
-                    )}
-
-                    <div className="form-group span-2">
-                      <FileUploadField
-                        label="Certificado laboral"
-                        value={doc.certificadoLaboral}
-                        onChange={(url) => updateDocente(i, "certificadoLaboral", url)}
-                      />
-                    </div>
-
-                    <div className="form-checkbox-group" style={{ marginTop: 12 }}>
-                      <input type="checkbox" id={`doc-cert-${i}`} checked={Boolean(doc.documentoVerificado)} onChange={e => updateDocente(i, "documentoVerificado", e.target.checked)} />
-                      <label htmlFor={`doc-cert-${i}`}>Certificado verificado</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <button type="button" className="btn btn-secondary" onClick={() => setDocentes(p => [...p, emptyDocente()])}>
-              + Agregar experiencia docente
-            </button>
-          </div>
         )}
 
-        <div className="flex justify-between items-center mt-4">
-          <span />
-          <div className="flex gap-2">
-            <button type="submit" className="btn btn-primary" disabled={saving}>
-              {saving ? "Guardando..." : "✓ Guardar sección"}
-            </button>
-          </div>
+        {error && (
+            <div className="alert alert-danger animate-in" style={{ marginBottom: 20 }}>
+              {error}
+            </div>
+        )}
+
+        <div className="tabs animate-in">
+          {["Experiencia General", "Experiencia Docente"].map((t, i) => (
+              <button key={t} type="button" className={`tab ${tab === i ? "active" : ""}`} onClick={() => setTab(i)}>{t}</button>
+          ))}
         </div>
-      </form>
-    </AppLayout>
+
+        <form onSubmit={handleSave}>
+          {tab === 0 && (
+              <div className="animate-in">
+                <div className="alert alert-info" style={{ marginBottom: 16 }}>
+                  Puede agregar varias experiencias laborales. Para cambiar una experiencia ya guardada, solo puede modificar teléfono, fecha de retiro (si aplica), horas promedio, motivo de retiro, certificado y su verificación.
+                </div>
+                {exps.map((exp, i) => {
+                  const hasId = !!exp.id;
+                  const isDisabled = (field: keyof ExperienciaLaboral) => isExpFieldDisabled(field, hasId);
+                  return (
+                      <div key={exp.id ?? exp.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}>
+                        <div className="form-section-header" style={{ cursor: "default" }}>
+                          <div className="section-icon">💼</div>
+                          <h3>Empleo #{i + 1}{hasId ? " — existente" : " — nuevo"}{exp.cargo ? ` — ${exp.cargo}` : ""}</h3>
+                          <div style={{ marginLeft: "auto" }}>
+                            {hasId ? (
+                                <span className="badge badge-green">Registrado</span>
+                            ) : (
+                                exps.length > 1 && (
+                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => setExps(p => p.filter((_, idx) => idx !== i))}>
+                                      Quitar borrador
+                                    </button>
+                                )
+                            )}
+                          </div>
+                        </div>
+                        <div className="form-section-body">
+                          <div className="form-grid cols-3">
+                            {/* Campos no actualizables (solo al crear) */}
+                            <div className="form-group">
+                              <label className="form-label">Tipo de entidad <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("tipoEntidad")}
+                                  value={exp.tipoEntidad}
+                                  onChange={e => updateExp(i, "tipoEntidad", e.target.value)}
+                              >
+                                {Object.entries(TipoEntidadLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group span-2">
+                              <label className="form-label">Nombre de la entidad / empresa <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("nombreEntidad")}
+                                  value={exp.nombreEntidad}
+                                  onChange={e => updateExp(i, "nombreEntidad", e.target.value)}
+                                  placeholder="Ej: Ministerio de Hacienda"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">País <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("pais")}
+                                  value={exp.pais}
+                                  onChange={e => updateExp(i, "pais", e.target.value)}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Departamento <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("departamento")}
+                                  value={exp.departamento}
+                                  onChange={e => updateExp(i, "departamento", e.target.value)}
+                                  placeholder="Ej: Bogotá D.C."
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Municipio <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("municipio")}
+                                  value={exp.municipio}
+                                  onChange={e => updateExp(i, "municipio", e.target.value)}
+                                  placeholder="Ej: Bogotá"
+                              />
+                            </div>
+
+                            <div className="form-group span-2">
+                              <label className="form-label">Dirección entidad <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("direccionEntidad")}
+                                  value={exp.direccionEntidad}
+                                  onChange={e => updateExp(i, "direccionEntidad", e.target.value)}
+                                  placeholder="Ej: Calle 26 # 13-19"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Teléfono entidad</label>
+                              <input
+                                  className="form-input"
+                                  value={exp.telefono ?? ""}
+                                  onChange={e => updateExp(i, "telefono", e.target.value)}
+                                  placeholder="Ej: 6012345678"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Cargo <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("cargo")}
+                                  value={exp.cargo}
+                                  onChange={e => updateExp(i, "cargo", e.target.value)}
+                                  placeholder="Ej: Analista de Sistemas"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Nivel jerárquico <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("nivelJerarquiaEmpleo")}
+                                  value={exp.nivelJerarquiaEmpleo}
+                                  onChange={e => updateExp(i, "nivelJerarquiaEmpleo", e.target.value)}
+                              >
+                                {Object.entries(NivelJerarquicoEmpleoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Dependencia <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("dependencia")}
+                                  value={exp.dependencia}
+                                  onChange={e => updateExp(i, "dependencia", e.target.value)}
+                                  placeholder="Ej: Dirección de TI"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Fecha de ingreso <span className="required">*</span></label>
+                              <input
+                                  type="date"
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("fechaIngreso")}
+                                  value={exp.fechaIngreso}
+                                  onChange={e => updateExp(i, "fechaIngreso", e.target.value)}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">¿Trabajo actual? <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("trabajoActual")}
+                                  value={String(exp.trabajoActual)}
+                                  onChange={e => updateExp(i, "trabajoActual", e.target.value === "true")}
+                              >
+                                <option value="false">No</option>
+                                <option value="true">Sí</option>
+                              </select>
+                            </div>
+
+                            {!exp.trabajoActual && (
+                                <div className="form-group">
+                                  <label className="form-label">Fecha de retiro</label>
+                                  <input
+                                      type="date"
+                                      className="form-input"
+                                      min={exp.fechaIngreso || undefined}
+                                      value={exp.fechaRetiro ?? ""}
+                                      onChange={e => updateExp(i, "fechaRetiro", e.target.value)}
+                                  />
+                                </div>
+                            )}
+
+                            <div className="form-group">
+                              <label className="form-label">Jornada laboral <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("jornadaLaboral")}
+                                  value={exp.jornadaLaboral}
+                                  onChange={e => updateExp(i, "jornadaLaboral", e.target.value)}
+                              >
+                                {Object.entries(JornadaLaboralLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Horas promedio / mes</label>
+                              <input
+                                  type="number"
+                                  className="form-input"
+                                  value={exp.horasPromedioMes ?? 0}
+                                  onChange={e => updateExp(i, "horasPromedioMes", Number(e.target.value))}
+                                  min={1}
+                                  max={744}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Tiempo experiencia <span className="required">*</span></label>
+                              <input
+                                  type="number"
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("tiempoExperiencia")}
+                                  value={exp.tiempoExperiencia}
+                                  onChange={e => updateExp(i, "tiempoExperiencia", Number(e.target.value))}
+                                  min={1}
+                                  max={1000000000}
+                              />
+                            </div>
+
+                            {!exp.trabajoActual && (
+                                <div className="form-group span-3">
+                                  <label className="form-label">Motivo de retiro</label>
+                                  <input
+                                      className="form-input"
+                                      value={exp.motivoRetiro ?? ""}
+                                      onChange={e => updateExp(i, "motivoRetiro", e.target.value)}
+                                      placeholder="Opcional"
+                                  />
+                                </div>
+                            )}
+
+                            <div className="form-group span-2">
+                              <FileUploadField
+                                  label="Certificado laboral"
+                                  value={exp.certificadoLaboral}
+                                  onChange={(url) => updateExp(i, "certificadoLaboral", url)}
+                              />
+                            </div>
+
+                            <div className="form-checkbox-group" style={{ marginTop: 12 }}>
+                              <input
+                                  type="checkbox"
+                                  id={`exp-cert-${i}`}
+                                  checked={Boolean(exp.documentoVerificado)}
+                                  onChange={e => updateExp(i, "documentoVerificado", e.target.checked)}
+                              />
+                              <label htmlFor={`exp-cert-${i}`}>Certificado verificado</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  );
+                })}
+                <button type="button" className="btn btn-secondary" onClick={() => setExps(p => [...p, emptyExp()])}>
+                  + Agregar otra experiencia
+                </button>
+              </div>
+          )}
+
+          {tab === 1 && (
+              <div className="animate-in">
+                <div className="alert alert-info" style={{ marginBottom: 16 }}>
+                  Puede agregar varias experiencias docentes. Para cambiar una experiencia ya guardada, solo puede modificar fecha de terminación (si aplica), horas promedio, motivo de retiro, teléfono, materia impartida, certificado y su verificación.
+                </div>
+                {docentes.length === 0 && (
+                    <div className="card" style={{ padding: "40px", textAlign: "center", marginBottom: 16 }}>
+                      <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>🏫</div>
+                      <p className="text-muted">No ha registrado experiencia docente.</p>
+                    </div>
+                )}
+
+                {docentes.map((doc, i) => {
+                  const hasId = !!doc.id;
+                  const isDisabled = (field: keyof ExperienciaLaboralDocente) => isDocenteFieldDisabled(field, hasId);
+                  return (
+                      <div key={doc.id ?? doc.clientId ?? i} className="form-section" style={{ marginBottom: 16 }}>
+                        <div className="form-section-header" style={{ cursor: "default" }}>
+                          <div className="section-icon">🏫</div>
+                          <h3>Docencia #{i + 1}{hasId ? " — existente" : " — nuevo"}{doc.nombreInstitucion ? ` — ${doc.nombreInstitucion}` : ""}</h3>
+                          <div style={{ marginLeft: "auto" }}>
+                            {hasId ? (
+                                <span className="badge badge-green">Registrado</span>
+                            ) : (
+                                <button type="button" className="btn btn-danger btn-sm" onClick={() => setDocentes(p => p.filter((_, idx) => idx !== i))}>
+                                  Quitar borrador
+                                </button>
+                            )}
+                          </div>
+                        </div>
+                        <div className="form-section-body">
+                          <div className="form-grid cols-3">
+                            <div className="form-group">
+                              <label className="form-label">Tipo de institución <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("tipoInstitucion")}
+                                  value={doc.tipoInstitucion}
+                                  onChange={e => updateDocente(i, "tipoInstitucion", e.target.value)}
+                              >
+                                {Object.entries(TipoInstitucionLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group span-2">
+                              <label className="form-label">Nombre de la institución <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("nombreInstitucion")}
+                                  value={doc.nombreInstitucion}
+                                  onChange={e => updateDocente(i, "nombreInstitucion", e.target.value)}
+                                  placeholder="Ej: Universidad Nacional de Colombia"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">País <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("pais")}
+                                  value={doc.pais}
+                                  onChange={e => updateDocente(i, "pais", e.target.value)}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Departamento <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("departamento")}
+                                  value={doc.departamento}
+                                  onChange={e => updateDocente(i, "departamento", e.target.value)}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Municipio <span className="required">*</span></label>
+                              <input
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("municipio")}
+                                  value={doc.municipio}
+                                  onChange={e => updateDocente(i, "municipio", e.target.value)}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Nivel académico <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("nivelAcademico")}
+                                  value={doc.nivelAcademico}
+                                  onChange={e => updateDocente(i, "nivelAcademico", e.target.value)}
+                              >
+                                {Object.entries(NivelAcademicoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Área de conocimiento <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("areaConocimiento")}
+                                  value={doc.areaConocimiento}
+                                  onChange={e => updateDocente(i, "areaConocimiento", e.target.value)}
+                              >
+                                {Object.entries(AreaConocimientoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Materia impartida</label>
+                              <input
+                                  className="form-input"
+                                  value={doc.materiaImpartida ?? ""}
+                                  onChange={e => updateDocente(i, "materiaImpartida", e.target.value)}
+                                  placeholder="Ej: Cálculo I"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Fecha de ingreso <span className="required">*</span></label>
+                              <input
+                                  type="date"
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("fechaIngreso")}
+                                  value={doc.fechaIngreso}
+                                  onChange={e => updateDocente(i, "fechaIngreso", e.target.value)}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">¿Trabajo actual? <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("trabajoActual")}
+                                  value={String(doc.trabajoActual)}
+                                  onChange={e => updateDocente(i, "trabajoActual", e.target.value === "true")}
+                              >
+                                <option value="false">No</option>
+                                <option value="true">Sí</option>
+                              </select>
+                            </div>
+
+                            {!doc.trabajoActual && (
+                                <div className="form-group">
+                                  <label className="form-label">Fecha de terminación</label>
+                                  <input
+                                      type="date"
+                                      className="form-input"
+                                      min={doc.fechaIngreso || undefined}
+                                      value={doc.fechaTerminacion ?? ""}
+                                      onChange={e => updateDocente(i, "fechaTerminacion", e.target.value)}
+                                  />
+                                </div>
+                            )}
+
+                            <div className="form-group">
+                              <label className="form-label">Tipo de zona <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("tipoZona")}
+                                  value={doc.tipoZona}
+                                  onChange={e => updateDocente(i, "tipoZona", e.target.value)}
+                              >
+                                {Object.entries(TipoZonaLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Jornada laboral <span className="required">*</span></label>
+                              <select
+                                  className="form-select"
+                                  required
+                                  disabled={isDisabled("jornadaLaboral")}
+                                  value={doc.jornadaLaboral}
+                                  onChange={e => updateDocente(i, "jornadaLaboral", e.target.value)}
+                              >
+                                {Object.entries(JornadaLaboralLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Horas promedio / mes</label>
+                              <input
+                                  type="number"
+                                  className="form-input"
+                                  value={doc.horasPromedioMes ?? 0}
+                                  onChange={e => updateDocente(i, "horasPromedioMes", Number(e.target.value))}
+                                  min={1}
+                                  max={744}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Tiempo experiencia <span className="required">*</span></label>
+                              <input
+                                  type="number"
+                                  className="form-input"
+                                  required
+                                  disabled={isDisabled("tiempoExperiencia")}
+                                  value={doc.tiempoExperiencia}
+                                  onChange={e => updateDocente(i, "tiempoExperiencia", Number(e.target.value))}
+                                  min={1}
+                                  max={1000000000}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label className="form-label">Teléfono</label>
+                              <input
+                                  className="form-input"
+                                  value={doc.telefono ?? ""}
+                                  onChange={e => updateDocente(i, "telefono", e.target.value)}
+                              />
+                            </div>
+
+                            {!doc.trabajoActual && (
+                                <div className="form-group span-2">
+                                  <label className="form-label">Motivo de retiro</label>
+                                  <input
+                                      className="form-input"
+                                      value={doc.motivoRetiro ?? ""}
+                                      onChange={e => updateDocente(i, "motivoRetiro", e.target.value)}
+                                  />
+                                </div>
+                            )}
+
+                            <div className="form-group span-2">
+                              <FileUploadField
+                                  label="Certificado laboral"
+                                  value={doc.certificadoLaboral}
+                                  onChange={(url) => updateDocente(i, "certificadoLaboral", url)}
+                              />
+                            </div>
+
+                            <div className="form-checkbox-group" style={{ marginTop: 12 }}>
+                              <input
+                                  type="checkbox"
+                                  id={`doc-cert-${i}`}
+                                  checked={Boolean(doc.documentoVerificado)}
+                                  onChange={e => updateDocente(i, "documentoVerificado", e.target.checked)}
+                              />
+                              <label htmlFor={`doc-cert-${i}`}>Certificado verificado</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  );
+                })}
+                <button type="button" className="btn btn-secondary" onClick={() => setDocentes(p => [...p, emptyDocente()])}>
+                  + Agregar experiencia docente
+                </button>
+              </div>
+          )}
+
+          <div className="flex justify-between items-center mt-4">
+            <span />
+            <div className="flex gap-2">
+              <button type="submit" className="btn btn-primary" disabled={saving}>
+                {saving ? "Guardando..." : "✓ Guardar sección"}
+              </button>
+            </div>
+          </div>
+        </form>
+      </AppLayout>
   );
 };
 

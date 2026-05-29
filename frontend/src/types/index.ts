@@ -226,7 +226,7 @@ export enum TipoPremioReconocimiento {
 // ─── Labels reutilizables ───────────────────────────────────────────────────
 
 export const optionEntries = <T extends Record<string, string>>(labels: Record<T[keyof T], string>) =>
-  Object.entries(labels) as Array<[T[keyof T], string]>;
+    Object.entries(labels) as Array<[T[keyof T], string]>;
 
 export const GeneroLabels: Record<Genero, string> = {
   [Genero.Masculino]: "Masculino",

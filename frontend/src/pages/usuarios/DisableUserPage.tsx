@@ -50,52 +50,52 @@ const DisableUserPage: React.FC = () => {
   };
 
   return (
-    <AppLayout title="Inhabilitar usuario">
-      <div className="page-header">
-        <h2>Inhabilitar usuario</h2>
-        <p>Defina hasta qué fecha el usuario quedará inhabilitado.</p>
-      </div>
-
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
-
-      <form className="form-section" onSubmit={handleSubmit}>
-        <div className="form-section-header">
-          <div className="section-icon">IN</div>
-          <h3>Datos de inhabilitación</h3>
+      <AppLayout title="Inhabilitar usuario">
+        <div className="page-header">
+          <h2>Inhabilitar usuario</h2>
+          <p>Defina hasta qué fecha el usuario quedará inhabilitado.</p>
         </div>
 
-        <div className="form-section-body">
-          <div className="form-grid">
-            <div className="form-group">
-              <label className="form-label">Tipo de identificación <span className="required">*</span></label>
-              <select name="tipoIdentificacion" className="form-select" value={form.tipoIdentificacion} onChange={handleChange}>
-                {Object.entries(TipoIdentificacionLabels).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
-                ))}
-              </select>
-            </div>
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
 
-            <div className="form-group">
-              <label className="form-label">Número de identificación <span className="required">*</span></label>
-              <input name="numeroIdentificacion" className="form-input" value={form.numeroIdentificacion} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Fecha final <span className="required">*</span></label>
-              <input type="datetime-local" name="fechaFin" className="form-input" value={form.fechaFin} onChange={handleChange} />
-            </div>
+        <form className="form-section" onSubmit={handleSubmit}>
+          <div className="form-section-header">
+            <div className="section-icon">IN</div>
+            <h3>Datos de inhabilitación</h3>
           </div>
 
-          <div className="flex justify-between mt-6">
-            <button type="submit" className="btn btn-danger" disabled={loading}>
-              {loading ? <span className="spinner" /> : null}
-              {loading ? "Procesando..." : "Inhabilitar usuario"}
-            </button>
+          <div className="form-section-body">
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Tipo de identificación <span className="required">*</span></label>
+                <select name="tipoIdentificacion" className="form-select" value={form.tipoIdentificacion} onChange={handleChange}>
+                  {Object.entries(TipoIdentificacionLabels).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Número de identificación <span className="required">*</span></label>
+                <input name="numeroIdentificacion" className="form-input" value={form.numeroIdentificacion} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Fecha final <span className="required">*</span></label>
+                <input type="datetime-local" name="fechaFin" className="form-input" value={form.fechaFin} onChange={handleChange} />
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button type="submit" className="btn btn-danger" disabled={loading}>
+                {loading ? <span className="spinner" /> : null}
+                {loading ? "Procesando..." : "Inhabilitar usuario"}
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
-    </AppLayout>
+        </form>
+      </AppLayout>
   );
 };
 
