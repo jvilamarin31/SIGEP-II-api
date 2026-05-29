@@ -39,43 +39,43 @@ const ChangePasswordPage: React.FC = () => {
   };
 
   return (
-    <AppLayout title="Cambiar contraseña">
-      <div className="page-header">
-        <h2>Cambiar contraseña</h2>
-        <p>Actualice la contraseña del usuario autenticado.</p>
-      </div>
-
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
-
-      <form className="form-section" onSubmit={handleSubmit}>
-        <div className="form-section-header">
-          <div className="section-icon">PW</div>
-          <h3>Nueva contraseña</h3>
+      <AppLayout title="Cambiar contraseña">
+        <div className="page-header">
+          <h2>Cambiar contraseña</h2>
+          <p>Actualice la contraseña del usuario autenticado.</p>
         </div>
 
-        <div className="form-section-body">
-          <div className="form-grid">
-            <div className="form-group">
-              <label className="form-label">Nueva contraseña <span className="required">*</span></label>
-              <input type="password" name="contraseña" className="form-input" value={form.contraseña} onChange={handleChange} autoComplete="new-password" />
-            </div>
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
 
-            <div className="form-group">
-              <label className="form-label">Confirmar contraseña <span className="required">*</span></label>
-              <input type="password" name="confirmarContraseña" className="form-input" value={form.confirmarContraseña} onChange={handleChange} autoComplete="new-password" />
-            </div>
+        <form className="form-section" onSubmit={handleSubmit}>
+          <div className="form-section-header">
+            <div className="section-icon">PW</div>
+            <h3>Nueva contraseña</h3>
           </div>
 
-          <div className="flex justify-between mt-6">
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? <span className="spinner" /> : null}
-              {loading ? "Guardando..." : "Guardar contraseña"}
-            </button>
+          <div className="form-section-body">
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Nueva contraseña <span className="required">*</span></label>
+                <input type="password" name="contraseña" className="form-input" value={form.contraseña} onChange={handleChange} autoComplete="new-password" />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Confirmar contraseña <span className="required">*</span></label>
+                <input type="password" name="confirmarContraseña" className="form-input" value={form.confirmarContraseña} onChange={handleChange} autoComplete="new-password" />
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button type="submit" className="btn btn-primary" disabled={loading}>
+                {loading ? <span className="spinner" /> : null}
+                {loading ? "Guardando..." : "Guardar contraseña"}
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
-    </AppLayout>
+        </form>
+      </AppLayout>
   );
 };
 

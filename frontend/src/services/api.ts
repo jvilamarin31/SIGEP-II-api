@@ -105,22 +105,22 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      redirectToLogin();
-    }
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        redirectToLogin();
+      }
 
-    return Promise.reject(error);
-  }
+      return Promise.reject(error);
+    }
 );
 
 const cleanErrorMessage = (message: string): string => {
   const normalized = message.toLowerCase();
 
   if (
-    normalized.includes("no se ha encontrado un curriculum") ||
-    normalized.includes("curriculum registrado")
+      normalized.includes("no se ha encontrado un curriculum") ||
+      normalized.includes("curriculum registrado")
   ) {
     return "Primero guarda los datos básicos para poder continuar con esta sección.";
   }
@@ -138,17 +138,17 @@ const cleanErrorMessage = (message: string): string => {
   }
 
   if (
-    normalized.includes("backend") ||
-    normalized.includes("spring") ||
-    normalized.includes("cors") ||
-    normalized.includes("endpoint") ||
-    normalized.includes("http") ||
-    normalized.includes("api") ||
-    normalized.includes("exception") ||
-    normalized.includes("stack") ||
-    normalized.includes("cloudflare") ||
-    normalized.includes("s3") ||
-    normalized.includes("r2")
+      normalized.includes("backend") ||
+      normalized.includes("spring") ||
+      normalized.includes("cors") ||
+      normalized.includes("endpoint") ||
+      normalized.includes("http") ||
+      normalized.includes("api") ||
+      normalized.includes("exception") ||
+      normalized.includes("stack") ||
+      normalized.includes("cloudflare") ||
+      normalized.includes("s3") ||
+      normalized.includes("r2")
   ) {
     return "No fue posible completar la acción. Inténtalo nuevamente o vuelve a iniciar sesión.";
   }
@@ -174,8 +174,8 @@ export const getApiError = (error: unknown): string => {
 
     if (data && typeof data === "object") {
       const details = Object.entries(data)
-        .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : String(value)}`)
-        .join(" | ");
+          .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : String(value)}`)
+          .join(" | ");
 
       return cleanErrorMessage(details) || "Revisa los campos del formulario e inténtalo nuevamente.";
     }
@@ -193,29 +193,29 @@ export const toInstant = (date?: string): string | undefined => {
 
 export const removeEmpty = <T extends object>(data: T): Partial<T> => {
   return Object.fromEntries(
-    Object.entries(data).filter(([, value]) => value !== "" && value !== undefined && value !== null)
+      Object.entries(data).filter(([, value]) => value !== "" && value !== undefined && value !== null)
   ) as Partial<T>;
 };
 
 // Auth
 export const authService = {
   login: (data: LoginRequest) =>
-    api.post<LoginResponse>("/api/auth/login", data).then((r) => r.data),
+      api.post<LoginResponse>("/api/auth/login", data).then((r) => r.data),
 
   crearUsuario: (data: NuevoUsuarioRequest) =>
-    api.post("/api/auth/registro", data).then((r) => r.data),
+      api.post("/api/auth/registro", data).then((r) => r.data),
 
   pedirEnlace: (data: PedirEnlaceEmailRequest) =>
-    api.post<string>("/api/auth/pedirEnlace", data).then((r) => r.data),
+      api.post<string>("/api/auth/pedirEnlace", data).then((r) => r.data),
 
   recuperarContrasena: (token: string, data: CambiarContrasenaRequest) =>
-    api.post<string>("/api/auth/recuperarContraseña", data, { params: { token } }).then((r) => r.data),
+      api.post<string>("/api/auth/recuperarContraseña", data, { params: { token } }).then((r) => r.data),
 
   cambiarContraseña: (data: CambiarContrasenaRequest) =>
-    api.put("/api/auth/cambiarContraseña", data).then((r) => r.data),
+      api.put("/api/auth/cambiarContraseña", data).then((r) => r.data),
 
   inhabilitarUsuario: (data: InhabilitarUsuarioRequest) =>
-    api.put("/api/auth/inhabilitarUsuario", data).then((r) => r.data),
+      api.put("/api/auth/inhabilitarUsuario", data).then((r) => r.data),
 };
 
 
@@ -249,107 +249,107 @@ export const fileService = {
 // Curriculum
 export const curriculumService = {
   obtenerDatosBasicos: () =>
-    api.get("/api/curriculum/datosPersonales/datosBasicos").then((r) => r.data),
+      api.get("/api/curriculum/datosPersonales/datosBasicos").then((r) => r.data),
 
   obtenerDatosDemograficos: () =>
-    api.get("/api/curriculum/datosPersonales/datosDemograficos").then((r) => r.data),
+      api.get("/api/curriculum/datosPersonales/datosDemograficos").then((r) => r.data),
 
   obtenerDatosContacto: () =>
-    api.get("/api/curriculum/datosPersonales/datosContacto").then((r) => r.data),
+      api.get("/api/curriculum/datosPersonales/datosContacto").then((r) => r.data),
 
   registrarDatosBasicos: (data: RegistrarDatosBasicosRequest) =>
-    api.post("/api/curriculum/datosPersonales/datosBasicos", data).then((r) => r.data),
+      api.post("/api/curriculum/datosPersonales/datosBasicos", data).then((r) => r.data),
 
   actualizarDatosBasicos: (data: ActualizarDatosBasicosRequest) =>
-    api.put("/api/curriculum/datosPersonales/datosBasicos", removeEmpty(data)).then((r) => r.data),
+      api.put("/api/curriculum/datosPersonales/datosBasicos", removeEmpty(data)).then((r) => r.data),
 
   registrarDatosDemograficos: (data: RegistrarDatosDemograficosRequest) =>
-    api.post("/api/curriculum/datosPersonales/datosDemograficos", data).then((r) => r.data),
+      api.post("/api/curriculum/datosPersonales/datosDemograficos", data).then((r) => r.data),
 
   actualizarDatosDemograficos: (data: ActualizarDatosDemograficosRequest) =>
-    api.put("/api/curriculum/datosPersonales/datosDemograficos", removeEmpty(data)).then((r) => r.data),
+      api.put("/api/curriculum/datosPersonales/datosDemograficos", removeEmpty(data)).then((r) => r.data),
 
   registrarDatosContacto: (data: RegistrarDatosContactoRequest) =>
-    api.post("/api/curriculum/datosPersonales/datosContacto", data).then((r) => r.data),
+      api.post("/api/curriculum/datosPersonales/datosContacto", data).then((r) => r.data),
 
   actualizarDatosContacto: (data: ActualizarDatosContactoRequest) =>
-    api.put("/api/curriculum/datosPersonales/datosContacto", removeEmpty(data)).then((r) => r.data),
+      api.put("/api/curriculum/datosPersonales/datosContacto", removeEmpty(data)).then((r) => r.data),
 
   obtenerFormacionesAcademicas: () =>
-    api.get("/api/curriculum/educacion/formacionAcademica").then((r) => r.data),
+      api.get("/api/curriculum/educacion/formacionAcademica").then((r) => r.data),
 
   obtenerEducacionesTrabajo: () =>
-    api.get("/api/curriculum/educacion/trabajo").then((r) => r.data),
+      api.get("/api/curriculum/educacion/trabajo").then((r) => r.data),
 
   obtenerIdiomas: () =>
-    api.get("/api/curriculum/educacion/idioma").then((r) => r.data),
+      api.get("/api/curriculum/educacion/idioma").then((r) => r.data),
 
   registrarFormacionAcademica: (data: RegistrarFormacionAcademicaRequest) =>
-    api.post("/api/curriculum/educacion/formacionAcademica", removeEmpty(data)).then((r) => r.data),
+      api.post("/api/curriculum/educacion/formacionAcademica", removeEmpty(data)).then((r) => r.data),
 
   actualizarFormacionAcademica: (data: ActualizarFormacionAcademicaRequest) =>
-    api.put("/api/curriculum/educacion/formacionAcademica", removeEmpty(data)).then((r) => r.data),
+      api.put("/api/curriculum/educacion/formacionAcademica", removeEmpty(data)).then((r) => r.data),
 
   registrarEducacionTrabajo: (data: RegistrarEducacionTrabajoRequest) =>
-    api.post("/api/curriculum/educacion/trabajo", removeEmpty(data)).then((r) => r.data),
+      api.post("/api/curriculum/educacion/trabajo", removeEmpty(data)).then((r) => r.data),
 
   actualizarEducacionTrabajo: (data: ActualizarEducacionTrabajoRequest) =>
-    api.put("/api/curriculum/educacion/trabajo", removeEmpty(data)).then((r) => r.data),
+      api.put("/api/curriculum/educacion/trabajo", removeEmpty(data)).then((r) => r.data),
 
   registrarIdioma: (data: RegistrarIdiomaRequest) =>
-    api.post("/api/curriculum/educacion/idioma", removeEmpty(data)).then((r) => r.data),
+      api.post("/api/curriculum/educacion/idioma", removeEmpty(data)).then((r) => r.data),
 
   actualizarIdioma: (data: ActualizarIdiomaRequest) =>
-    api.put("/api/curriculum/educacion/idioma", removeEmpty(data)).then((r) => r.data),
+      api.put("/api/curriculum/educacion/idioma", removeEmpty(data)).then((r) => r.data),
 
   obtenerExperienciasLaborales: () =>
-    api.get("/api/curriculum/experienciaLaboral").then((r) => r.data),
+      api.get("/api/curriculum/experienciaLaboral").then((r) => r.data),
 
   obtenerExperienciasDocentes: () =>
-    api.get("/api/curriculum/experienciaLaboral/docente").then((r) => r.data),
+      api.get("/api/curriculum/experienciaLaboral/docente").then((r) => r.data),
 
   registrarExperienciaLaboral: (data: RegistrarExperienciaLaboralRequest) =>
-    api.post("/api/curriculum/experienciaLaboral", removeEmpty(data)).then((r) => r.data),
+      api.post("/api/curriculum/experienciaLaboral", removeEmpty(data)).then((r) => r.data),
 
   actualizarExperienciaLaboral: (data: ActualizarExperienciaLaboralRequest) =>
-    api.put("/api/curriculum/experienciaLaboral", removeEmpty(data)).then((r) => r.data),
+      api.put("/api/curriculum/experienciaLaboral", removeEmpty(data)).then((r) => r.data),
 
   registrarExperienciaLaboralDocente: (data: RegistrarExperienciaLaboralDocenteRequest) =>
-    api.post("/api/curriculum/experienciaLaboral/docente", removeEmpty(data)).then((r) => r.data),
+      api.post("/api/curriculum/experienciaLaboral/docente", removeEmpty(data)).then((r) => r.data),
 
   actualizarExperienciaLaboralDocente: (data: ActualizarExperienciaLaboralDocenteRequest) =>
-    api.put("/api/curriculum/experienciaLaboral/docente", removeEmpty(data)).then((r) => r.data),
+      api.put("/api/curriculum/experienciaLaboral/docente", removeEmpty(data)).then((r) => r.data),
 
   obtenerPublicaciones: () =>
-    api.get("/api/curriculum/gerenciaPublica/publicacion").then((r) => r.data),
+      api.get("/api/curriculum/gerenciaPublica/publicacion").then((r) => r.data),
 
   obtenerPremiosReconocimientos: () =>
-    api.get("/api/curriculum/gerenciaPublica/premioReconocimiento").then((r) => r.data),
+      api.get("/api/curriculum/gerenciaPublica/premioReconocimiento").then((r) => r.data),
 
   obtenerParticipacionesProyectos: () =>
-    api.get("/api/curriculum/gerenciaPublica/participacionProyecto").then((r) => r.data),
+      api.get("/api/curriculum/gerenciaPublica/participacionProyecto").then((r) => r.data),
 
   obtenerParticipacionesCorporaciones: () =>
-    api.get("/api/curriculum/gerenciaPublica/participacionCorporacionEntidad").then((r) => r.data),
+      api.get("/api/curriculum/gerenciaPublica/participacionCorporacionEntidad").then((r) => r.data),
 
   registrarPublicacion: (data: RegistrarPublicacionRequest) =>
-    api.post("/api/curriculum/gerenciaPublica/publicacion", data).then((r) => r.data),
+      api.post("/api/curriculum/gerenciaPublica/publicacion", data).then((r) => r.data),
 
   registrarPremioReconocimiento: (data: RegistrarPremioReconocimientoRequest) =>
-    api.post("/api/curriculum/gerenciaPublica/premioReconocimiento", {
-      ...data,
-      fecha: toInstant(data.fecha),
-    }).then((r) => r.data),
+      api.post("/api/curriculum/gerenciaPublica/premioReconocimiento", {
+        ...data,
+        fecha: toInstant(data.fecha),
+      }).then((r) => r.data),
 
   registrarParticipacionProyecto: (data: RegistrarParticipacionProyectoRequest) =>
-    api.post("/api/curriculum/gerenciaPublica/participacionProyecto", {
-      ...data,
-      fechaInicio: toInstant(data.fechaInicio),
-      fechaTerminacion: toInstant(data.fechaTerminacion),
-    }).then((r) => r.data),
+      api.post("/api/curriculum/gerenciaPublica/participacionProyecto", {
+        ...data,
+        fechaInicio: toInstant(data.fechaInicio),
+        fechaTerminacion: toInstant(data.fechaTerminacion),
+      }).then((r) => r.data),
 
   registrarParticipacionCorporacionEntidad: (data: RegistrarParticipacionCorporacionEntidadRequest) =>
-    api.post("/api/curriculum/gerenciaPublica/participacionCorporacionEntidad", data).then((r) => r.data),
+      api.post("/api/curriculum/gerenciaPublica/participacionCorporacionEntidad", data).then((r) => r.data),
 
   descargarHojaVidaPdf: async (): Promise<void> => {
     const response = await api.get<Blob>("/api/curriculum/pdf", {

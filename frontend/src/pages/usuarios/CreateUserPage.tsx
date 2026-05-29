@@ -61,62 +61,62 @@ const CreateUserPage: React.FC = () => {
   };
 
   return (
-    <AppLayout title="Crear usuario">
-      <div className="page-header">
-        <h2>Crear usuario</h2>
-        <p>Registro de usuarios autorizado para Talento Humano.</p>
-      </div>
-
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
-
-      <form className="form-section" onSubmit={handleSubmit}>
-        <div className="form-section-header">
-          <div className="section-icon">US</div>
-          <h3>Datos del usuario</h3>
+      <AppLayout title="Crear usuario">
+        <div className="page-header">
+          <h2>Crear usuario</h2>
+          <p>Registro de usuarios autorizado para Talento Humano.</p>
         </div>
 
-        <div className="form-section-body">
-          <div className="form-grid">
-            <div className="form-group">
-              <label className="form-label">Tipo de identificación <span className="required">*</span></label>
-              <select name="tipoIdentificacion" className="form-select" value={form.tipoIdentificacion} onChange={handleChange}>
-                {Object.entries(TipoIdentificacionLabels).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
-                ))}
-              </select>
-            </div>
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
 
-            <div className="form-group">
-              <label className="form-label">Número de identificación <span className="required">*</span></label>
-              <input name="numeroIdentificacion" className="form-input" value={form.numeroIdentificacion} onChange={handleChange} />
-            </div>
-
-            <div className="form-group span-2">
-              <label className="form-label">Correo electrónico <span className="required">*</span></label>
-              <input type="email" name="email" className="form-input" value={form.email} onChange={handleChange} />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Contraseña <span className="required">*</span></label>
-              <input type="password" name="contraseña" className="form-input" value={form.contraseña} onChange={handleChange} autoComplete="new-password" />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Confirmar contraseña <span className="required">*</span></label>
-              <input type="password" name="confirmarContraseña" className="form-input" value={form.confirmarContraseña} onChange={handleChange} autoComplete="new-password" />
-            </div>
+        <form className="form-section" onSubmit={handleSubmit}>
+          <div className="form-section-header">
+            <div className="section-icon">US</div>
+            <h3>Datos del usuario</h3>
           </div>
 
-          <div className="flex justify-between mt-6">
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? <span className="spinner" /> : null}
-              {loading ? "Creando..." : "Crear usuario"}
-            </button>
+          <div className="form-section-body">
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Tipo de identificación <span className="required">*</span></label>
+                <select name="tipoIdentificacion" className="form-select" value={form.tipoIdentificacion} onChange={handleChange}>
+                  {Object.entries(TipoIdentificacionLabels).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Número de identificación <span className="required">*</span></label>
+                <input name="numeroIdentificacion" className="form-input" value={form.numeroIdentificacion} onChange={handleChange} />
+              </div>
+
+              <div className="form-group span-2">
+                <label className="form-label">Correo electrónico <span className="required">*</span></label>
+                <input type="email" name="email" className="form-input" value={form.email} onChange={handleChange} />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Contraseña <span className="required">*</span></label>
+                <input type="password" name="contraseña" className="form-input" value={form.contraseña} onChange={handleChange} autoComplete="new-password" />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Confirmar contraseña <span className="required">*</span></label>
+                <input type="password" name="confirmarContraseña" className="form-input" value={form.confirmarContraseña} onChange={handleChange} autoComplete="new-password" />
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button type="submit" className="btn btn-primary" disabled={loading}>
+                {loading ? <span className="spinner" /> : null}
+                {loading ? "Creando..." : "Crear usuario"}
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
-    </AppLayout>
+        </form>
+      </AppLayout>
   );
 };
 

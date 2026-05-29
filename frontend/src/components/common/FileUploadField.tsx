@@ -20,13 +20,13 @@ const fileNameFromUrl = (url?: string) => {
 };
 
 const FileUploadField: React.FC<FileUploadFieldProps> = ({
-  label,
-  value,
-  onChange,
-  required,
-  disabled,
-  helperText = "PDF, JPG o PNG. Máximo 10 MB.",
-}) => {
+                                                           label,
+                                                           value,
+                                                           onChange,
+                                                           required,
+                                                           disabled,
+                                                           helperText = "PDF, JPG o PNG. Máximo 10 MB.",
+                                                         }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -66,42 +66,42 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({
   };
 
   return (
-    <div className="form-group">
-      <label className="form-label">
-        {label} {required && <span className="required">*</span>}
-      </label>
+      <div className="form-group">
+        <label className="form-label">
+          {label} {required && <span className="required">*</span>}
+        </label>
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept={ACCEPTED_TYPES}
-        className="form-input"
-        required={required && !value}
-        disabled={disabled || uploading}
-        onChange={handleFileChange}
-      />
+        <input
+            ref={inputRef}
+            type="file"
+            accept={ACCEPTED_TYPES}
+            className="form-input"
+            required={required && !value}
+            disabled={disabled || uploading}
+            onChange={handleFileChange}
+        />
 
-      <small className="text-muted" style={{ display: "block", marginTop: 6 }}>
-        {uploading ? "Cargando documento..." : helperText}
-      </small>
+        <small className="text-muted" style={{ display: "block", marginTop: 6 }}>
+          {uploading ? "Cargando documento..." : helperText}
+        </small>
 
-      {value && (
-        <div className="flex gap-2 items-center" style={{ marginTop: 10, flexWrap: "wrap" }}>
-          <span className="badge badge-green">Documento cargado</span>
-          <span className="text-muted" style={{ fontSize: "0.85rem" }}>{fileNameFromUrl(value)}</span>
-          <button type="button" className="btn btn-secondary btn-sm" onClick={handleOpen} disabled={uploading}>
-            Ver documento
-          </button>
-          {!disabled && (
-            <button type="button" className="btn btn-danger btn-sm" onClick={() => onChange("")} disabled={uploading}>
-              Quitar
-            </button>
-          )}
-        </div>
-      )}
+        {value && (
+            <div className="flex gap-2 items-center" style={{ marginTop: 10, flexWrap: "wrap" }}>
+              <span className="badge badge-green">Documento cargado</span>
+              <span className="text-muted" style={{ fontSize: "0.85rem" }}>{fileNameFromUrl(value)}</span>
+              <button type="button" className="btn btn-secondary btn-sm" onClick={handleOpen} disabled={uploading}>
+                Ver documento
+              </button>
+              {!disabled && (
+                  <button type="button" className="btn btn-danger btn-sm" onClick={() => onChange("")} disabled={uploading}>
+                    Quitar
+                  </button>
+              )}
+            </div>
+        )}
 
-      {error && <div className="alert alert-danger" style={{ marginTop: 10 }}>{error}</div>}
-    </div>
+        {error && <div className="alert alert-danger" style={{ marginTop: 10 }}>{error}</div>}
+      </div>
   );
 };
 
