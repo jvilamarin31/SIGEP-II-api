@@ -124,10 +124,15 @@ ionic --version   # npm install -g @ionic/cli si no lo tienes
 
 ### 5.1. Variables de entorno
 
-Crea el archivo `sigep-ionic/.env`:
+Crea el archivo `sigep-ionic/.env` en la raiz de sigep-ionic.
 
+#### 🔧 Para desarrollo con backend local (Spring Boot en tu PC):
 ```env
 VITE_API_URL=http://localhost:8080
+```
+#### ☁️ Para usar el backend desplegado en la nube (Render en este caso):
+```env
+VITE_API_URL=https://sigep-ii-api.onrender.com
 ```
 ### 5.2. Instalación de dependencias
 
