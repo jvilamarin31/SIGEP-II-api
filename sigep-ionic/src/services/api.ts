@@ -29,7 +29,7 @@ import type {
   RegistrarPublicacionRequest,
 } from "../types";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 const STORAGE_KEY = "sigep_user";
 
 const decodeJwtPayload = (token: string): { exp?: number } | null => {
@@ -64,7 +64,7 @@ const redirectToLogin = () => {
 };
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 

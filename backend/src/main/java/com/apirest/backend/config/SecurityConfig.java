@@ -67,7 +67,10 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of(
         "http://localhost:5173",
-        "https://*.vercel.app"
+        "https://*.vercel.app",
+        "http://localhost:8100",
+        "capacitor://localhost",
+        "ionic://localhost"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
