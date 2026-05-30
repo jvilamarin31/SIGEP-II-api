@@ -206,6 +206,16 @@ Esto abrirá Android Studio con el proyecto listo.
 ### 7.5. Prueba de capacidades nativas
 Una vez instalada, verifica:
 - **Cámara:** en cualquier campo de carga de archivos, usa el botón "Cámara / Galería".
-- **Geolocalización:** en Datos Personales -> Datos de Contacto -> botón "Usar mi ubicación actual".
 - **Vibración y notificaciones:** al guardar cualquier formulario, el dispositivo vibrará y aparecerá una notificación local.
+- **Geolocalización:** en Datos Personales -> Datos de Contacto -> botón "Usar mi ubicación actual".
+  
+# 7.6. Troubleshooting de geolocalizacion
+Geolocalizacion puede no estar pidiendo permisos, se arregla añadiendo esto al archivo /SIGEP-II-api/sigep-ionic/android/app/src/main:
+Justo al final del archivo, abajo de  <!-- Permissions --> y antes de </manifest>
 
+```bash
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+```
+
+luego volver a ionic build y npx cap sync (o npx cap sync android) y volver a los pasos 7.3 y 7.4
