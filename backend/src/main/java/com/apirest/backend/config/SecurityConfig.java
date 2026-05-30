@@ -73,7 +73,8 @@ public class SecurityConfig {
         "http://localhost:8100",
         "capacitor://localhost",
         "ionic://localhost",
-        "http://localhost"
+        "http://localhost",
+        "https://localhost"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
