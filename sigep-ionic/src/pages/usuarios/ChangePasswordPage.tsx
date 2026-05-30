@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonItem,
   IonLabel,
@@ -66,42 +62,35 @@ const ChangePasswordPage: React.FC = () => {
   };
 
   return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Cambiar contraseña</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          <form onSubmit={handleSubmit}>
-            <IonItem>
-              <IonLabel position="stacked">Nueva contraseña *</IonLabel>
-              <IonInput
-                  type="password"
-                  value={form.contraseña}
-                  onIonChange={(e) => handleChange("contraseña", e.detail.value!)}
-                  autocomplete="new-password"
-              />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Confirmar contraseña *</IonLabel>
-              <IonInput
-                  type="password"
-                  value={form.confirmarContraseña}
-                  onIonChange={(e) => handleChange("confirmarContraseña", e.detail.value!)}
-                  autocomplete="new-password"
-              />
-            </IonItem>
+      <IonContent className="ion-padding">
+        <form onSubmit={handleSubmit}>
+          <IonItem>
+            <IonLabel position="stacked">Nueva contraseña *</IonLabel>
+            <IonInput
+                type="password"
+                value={form.contraseña}
+                onIonChange={(e) => handleChange("contraseña", e.detail.value!)}
+                autocomplete="new-password"
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Confirmar contraseña *</IonLabel>
+            <IonInput
+                type="password"
+                value={form.confirmarContraseña}
+                onIonChange={(e) => handleChange("confirmarContraseña", e.detail.value!)}
+                autocomplete="new-password"
+            />
+          </IonItem>
 
-            <IonButton expand="block" type="submit" disabled={loading} className="ion-margin-top">
-              {loading ? <IonSpinner name="crescent" /> : "Guardar contraseña"}
-            </IonButton>
-          </form>
+          <IonButton expand="block" type="submit" disabled={loading} className="ion-margin-top">
+            {loading ? <IonSpinner name="crescent" /> : "Guardar contraseña"}
+          </IonButton>
+        </form>
 
-          <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
-          <IonToast isOpen={!!success} message={success} duration={3000} onDidDismiss={() => setSuccess("")} />
-        </IonContent>
-      </IonPage>
+        <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
+        <IonToast isOpen={!!success} message={success} duration={3000} onDidDismiss={() => setSuccess("")} />
+      </IonContent>
   );
 };
 

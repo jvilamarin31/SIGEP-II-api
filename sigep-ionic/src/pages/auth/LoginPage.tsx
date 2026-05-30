@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
     try {
       const res = await authService.login(form);
       login(res);
-      history.push("/dashboard");
+      window.location.href = "/dashboard";
     } catch {
       setError("Credenciales inválidas. Verifique su número de identificación y contraseña.");
     } finally {

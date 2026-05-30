@@ -1,10 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonCard,
   IonCardHeader,
@@ -229,90 +225,80 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Inicio</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          {/* Encabezado con botón de PDF */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", marginBottom: "16px" }}>
-            <div>
-              <h2>Hoja de Vida</h2>
-              <p>Bienvenido al Sistema de Gestión del Empleo Público · {user?.numeroIdentificacion}</p>
-            </div>
-            <IonButton onClick={handleDownloadPdf} disabled={downloadingPdf}>
-              {downloadingPdf ? <IonSpinner name="crescent" /> : "Descargar hoja de vida"}
-            </IonButton>
+      <IonContent className="ion-padding">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", marginBottom: "16px" }}>
+          <div>
+            <h2>Hoja de Vida</h2>
+            <p>Bienvenido al Sistema de Gestión del Empleo Público · {user?.numeroIdentificacion}</p>
           </div>
+          <IonButton onClick={handleDownloadPdf} disabled={downloadingPdf}>
+            {downloadingPdf ? <IonSpinner name="crescent" /> : "Descargar hoja de vida"}
+          </IonButton>
+        </div>
 
-          {/* Tarjetas de estadísticas */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "12px", marginBottom: "24px" }}>
-            {stats.map((stat, idx) => (
-                <IonCard key={idx} className="ion-text-center">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "12px", marginBottom: "24px" }}>
+          {stats.map((stat, idx) => (
+              <IonCard key={idx} className="ion-text-center">
+                <IonCardContent>
+                  <div style={{ fontSize: "2rem" }}>{stat.icon}</div>
+                  <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{stat.value}</div>
+                  <div>{stat.label}</div>
+                </IonCardContent>
+              </IonCard>
+          ))}
+        </div>
+
+        <h3>Secciones de la Hoja de Vida</h3>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", marginTop: "8px" }}>
+          {sections.map((sec) => {
+            const status = sectionStatus[sec.key];
+            const label = status.loading ? "Verificando..." : status.completed ? "Completo" : "Incompleto";
+            const buttonLabel = status.completed ? "Ver sección" : "Completar sección";
+
+            return (
+                <IonCard key={sec.path} button onClick={() => history.push(sec.path)}>
+                  <IonCardHeader>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: "2rem" }}>{sec.icon}</span>
+                      <IonText color={status.completed ? "success" : "warning"}>{label}</IonText>
+                    </div>
+                    <IonCardTitle>{sec.title}</IonCardTitle>
+                  </IonCardHeader>
                   <IonCardContent>
-                    <div style={{ fontSize: "2rem" }}>{stat.icon}</div>
-                    <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{stat.value}</div>
-                    <div>{stat.label}</div>
+                    <p>{sec.desc}</p>
+                    <IonButton fill="clear" size="small" className="ion-margin-top">
+                      {buttonLabel} →
+                    </IonButton>
                   </IonCardContent>
                 </IonCard>
-            ))}
-          </div>
+            );
+          })}
+        </div>
 
-          <h3>Secciones de la Hoja de Vida</h3>
+        <IonCard color="light" className="ion-margin-top">
+          <IonCardContent style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <IonIcon icon={alertCircleOutline} color="primary" />
+            <span>
+            Complete todas las secciones de su hoja de vida para participar en convocatorias y procesos de selección del empleo público en Colombia.
+          </span>
+          </IonCardContent>
+        </IonCard>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", marginTop: "8px" }}>
-            {sections.map((sec) => {
-              const status = sectionStatus[sec.key];
-              const label = status.loading ? "Verificando..." : status.completed ? "Completo" : "Incompleto";
-              const buttonLabel = status.completed ? "Ver sección" : "Completar sección";
-
-              return (
-                  <IonCard key={sec.path} button onClick={() => history.push(sec.path)}>
-                    <IonCardHeader>
-                      <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ fontSize: "2rem" }}>{sec.icon}</span>
-                        <IonText color={status.completed ? "success" : "warning"}>{label}</IonText>
-                      </div>
-                      <IonCardTitle>{sec.title}</IonCardTitle>
-                    </IonCardHeader>
-                    <IonCardContent>
-                      <p>{sec.desc}</p>
-                      <IonButton fill="clear" size="small" className="ion-margin-top">
-                        {buttonLabel} →
-                      </IonButton>
-                    </IonCardContent>
-                  </IonCard>
-              );
-            })}
-          </div>
-
-          {/* Info alert */}
-          <IonCard color="light" className="ion-margin-top">
-            <IonCardContent style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              <IonIcon icon={alertCircleOutline} color="primary" />
-              <span>
-              Complete todas las secciones de su hoja de vida para participar en convocatorias y procesos de selección del empleo público en Colombia.
-            </span>
-            </IonCardContent>
-          </IonCard>
-
-          <IonToast
-              isOpen={showPdfToast}
-              message="Hoja de vida descargada correctamente."
-              duration={3000}
-              onDidDismiss={() => setShowPdfToast(false)}
-          />
-          <IonAlert
-              isOpen={showPdfAlert}
-              header="Error"
-              message={pdfAlertMsg}
-              buttons={["OK"]}
-              onDidDismiss={() => setShowPdfAlert(false)}
-          />
-        </IonContent>
-      </IonPage>
+        <IonToast
+            isOpen={showPdfToast}
+            message="Hoja de vida descargada correctamente."
+            duration={3000}
+            onDidDismiss={() => setShowPdfToast(false)}
+        />
+        <IonAlert
+            isOpen={showPdfAlert}
+            header="Error"
+            message={pdfAlertMsg}
+            buttons={["OK"]}
+            onDidDismiss={() => setShowPdfAlert(false)}
+        />
+      </IonContent>
   );
 };
 

@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonItem,
   IonLabel,
@@ -447,267 +443,260 @@ const ExperienciaPage: React.FC = () => {
   };
 
   return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Experiencia Laboral</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          {loading && (
-              <IonText color="medium">
-                <p>Cargando experiencia guardada...</p>
-              </IonText>
-          )}
-          <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
-          <IonToast isOpen={saved} message="✅ Información guardada correctamente." duration={3000} onDidDismiss={() => setSaved(false)} />
+      <IonContent className="ion-padding">
+        {loading && (
+            <IonText color="medium">
+              <p>Cargando experiencia guardada...</p>
+            </IonText>
+        )}
+        <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
+        <IonToast isOpen={saved} message="✅ Información guardada correctamente." duration={3000} onDidDismiss={() => setSaved(false)} />
 
-          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-            {["Experiencia General", "Experiencia Docente"].map((t, i) => (
-                <IonButton key={t} fill={tab === i ? "solid" : "outline"} onClick={() => setTab(i)} disabled={saving}>
-                  {t}
-                </IonButton>
-            ))}
-          </div>
-
-          <form onSubmit={handleSave}>
-            {tab === 0 && (
-                <>
-                  <IonText color="medium">
-                    <p>Puede agregar varias experiencias laborales. Para cambiar una experiencia ya guardada, solo puede modificar teléfono, fecha de retiro (si aplica), horas promedio, motivo de retiro, certificado y su verificación.</p>
-                  </IonText>
-                  {exps.map((exp, i) => {
-                    const hasId = !!exp.id;
-                    const isDisabled = (field: keyof ExperienciaLaboral) => isExpFieldDisabled(field, hasId);
-                    return (
-                        <div key={exp.id ?? exp.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
-                          <h3>
-                            Empleo #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
-                            {hasId ? null : exps.length > 1 && (
-                                <IonButton fill="clear" color="danger" onClick={() => setExps((p) => p.filter((_, idx) => idx !== i))}>
-                                  Quitar
-                                </IonButton>
-                            )}
-                          </h3>
-                          <IonItem>
-                            <IonLabel position="stacked">Tipo de entidad *</IonLabel>
-                            <IonSelect required disabled={isDisabled("tipoEntidad")} value={exp.tipoEntidad} onIonChange={(e) => updateExp(i, "tipoEntidad", e.detail.value)}>
-                              {Object.entries(TipoEntidadLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Nombre entidad *</IonLabel>
-                            <IonInput required disabled={isDisabled("nombreEntidad")} value={exp.nombreEntidad} onIonChange={(e) => updateExp(i, "nombreEntidad", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">País *</IonLabel>
-                            <IonInput required disabled={isDisabled("pais")} value={exp.pais} onIonChange={(e) => updateExp(i, "pais", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Departamento *</IonLabel>
-                            <IonInput required disabled={isDisabled("departamento")} value={exp.departamento} onIonChange={(e) => updateExp(i, "departamento", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Municipio *</IonLabel>
-                            <IonInput required disabled={isDisabled("municipio")} value={exp.municipio} onIonChange={(e) => updateExp(i, "municipio", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Dirección entidad *</IonLabel>
-                            <IonInput required disabled={isDisabled("direccionEntidad")} value={exp.direccionEntidad} onIonChange={(e) => updateExp(i, "direccionEntidad", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Teléfono entidad</IonLabel>
-                            <IonInput value={exp.telefono ?? ""} onIonChange={(e) => updateExp(i, "telefono", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Cargo *</IonLabel>
-                            <IonInput required disabled={isDisabled("cargo")} value={exp.cargo} onIonChange={(e) => updateExp(i, "cargo", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Nivel jerárquico *</IonLabel>
-                            <IonSelect required disabled={isDisabled("nivelJerarquiaEmpleo")} value={exp.nivelJerarquiaEmpleo} onIonChange={(e) => updateExp(i, "nivelJerarquiaEmpleo", e.detail.value)}>
-                              {Object.entries(NivelJerarquicoEmpleoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Dependencia *</IonLabel>
-                            <IonInput required disabled={isDisabled("dependencia")} value={exp.dependencia} onIonChange={(e) => updateExp(i, "dependencia", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Fecha ingreso *</IonLabel>
-                            <IonInput type="date" required disabled={isDisabled("fechaIngreso")} value={exp.fechaIngreso} onIonChange={(e) => updateExp(i, "fechaIngreso", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">¿Trabajo actual? *</IonLabel>
-                            <IonSelect required disabled={isDisabled("trabajoActual")} value={String(exp.trabajoActual)} onIonChange={(e) => updateExp(i, "trabajoActual", e.detail.value === "true")}>
-                              <IonSelectOption value="false">No</IonSelectOption>
-                              <IonSelectOption value="true">Sí</IonSelectOption>
-                            </IonSelect>
-                          </IonItem>
-                          {!exp.trabajoActual && (
-                              <IonItem>
-                                <IonLabel position="stacked">Fecha retiro</IonLabel>
-                                <IonInput type="date" value={exp.fechaRetiro ?? ""} onIonChange={(e) => updateExp(i, "fechaRetiro", e.detail.value!)} />
-                              </IonItem>
-                          )}
-                          <IonItem>
-                            <IonLabel position="stacked">Jornada laboral *</IonLabel>
-                            <IonSelect required disabled={isDisabled("jornadaLaboral")} value={exp.jornadaLaboral} onIonChange={(e) => updateExp(i, "jornadaLaboral", e.detail.value)}>
-                              {Object.entries(JornadaLaboralLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Horas promedio / mes</IonLabel>
-                            <IonInput type="number" value={exp.horasPromedioMes} onIonChange={(e) => updateExp(i, "horasPromedioMes", Number(e.detail.value))} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Tiempo experiencia *</IonLabel>
-                            <IonInput type="number" required disabled={isDisabled("tiempoExperiencia")} value={exp.tiempoExperiencia} onIonChange={(e) => updateExp(i, "tiempoExperiencia", Number(e.detail.value))} />
-                          </IonItem>
-                          {!exp.trabajoActual && (
-                              <IonItem>
-                                <IonLabel position="stacked">Motivo retiro</IonLabel>
-                                <IonInput value={exp.motivoRetiro ?? ""} onIonChange={(e) => updateExp(i, "motivoRetiro", e.detail.value!)} />
-                              </IonItem>
-                          )}
-                          <FileUploadField label="Certificado laboral" value={exp.certificadoLaboral} onChange={(url) => updateExp(i, "certificadoLaboral", url)} />
-                          <IonItem lines="none">
-                            <IonCheckbox checked={exp.documentoVerificado} onIonChange={(e) => updateExp(i, "documentoVerificado", e.detail.checked)}>
-                              <IonLabel>Certificado verificado</IonLabel>
-                            </IonCheckbox>
-                          </IonItem>
-                        </div>
-                    );
-                  })}
-                  <IonButton expand="block" onClick={() => setExps((p) => [...p, emptyExp()])}>
-                    + Agregar otra experiencia
-                  </IonButton>
-                </>
-            )}
-
-            {tab === 1 && (
-                <>
-                  <IonText color="medium">
-                    <p>Puede agregar varias experiencias docentes. Para cambiar una experiencia ya guardada, solo puede modificar fecha de terminación (si aplica), horas promedio, motivo de retiro, teléfono, materia impartida, certificado y su verificación.</p>
-                  </IonText>
-                  {docentes.length === 0 && <IonText color="medium"><p>No ha registrado experiencia docente.</p></IonText>}
-                  {docentes.map((doc, i) => {
-                    const hasId = !!doc.id;
-                    const isDisabled = (field: keyof ExperienciaLaboralDocente) => isDocenteFieldDisabled(field, hasId);
-                    return (
-                        <div key={doc.id ?? doc.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
-                          <h3>
-                            Docencia #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
-                            {hasId ? null : <IonButton fill="clear" color="danger" onClick={() => setDocentes((p) => p.filter((_, idx) => idx !== i))}>Quitar</IonButton>}
-                          </h3>
-                          <IonItem>
-                            <IonLabel position="stacked">Tipo institución *</IonLabel>
-                            <IonSelect required disabled={isDisabled("tipoInstitucion")} value={doc.tipoInstitucion} onIonChange={(e) => updateDocente(i, "tipoInstitucion", e.detail.value)}>
-                              {Object.entries(TipoInstitucionLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Nombre institución *</IonLabel>
-                            <IonInput required disabled={isDisabled("nombreInstitucion")} value={doc.nombreInstitucion} onIonChange={(e) => updateDocente(i, "nombreInstitucion", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">País *</IonLabel>
-                            <IonInput required disabled={isDisabled("pais")} value={doc.pais} onIonChange={(e) => updateDocente(i, "pais", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Departamento *</IonLabel>
-                            <IonInput required disabled={isDisabled("departamento")} value={doc.departamento} onIonChange={(e) => updateDocente(i, "departamento", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Municipio *</IonLabel>
-                            <IonInput required disabled={isDisabled("municipio")} value={doc.municipio} onIonChange={(e) => updateDocente(i, "municipio", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Nivel académico *</IonLabel>
-                            <IonSelect required disabled={isDisabled("nivelAcademico")} value={doc.nivelAcademico} onIonChange={(e) => updateDocente(i, "nivelAcademico", e.detail.value)}>
-                              {Object.entries(NivelAcademicoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Área conocimiento *</IonLabel>
-                            <IonSelect required disabled={isDisabled("areaConocimiento")} value={doc.areaConocimiento} onIonChange={(e) => updateDocente(i, "areaConocimiento", e.detail.value)}>
-                              {Object.entries(AreaConocimientoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Materia impartida</IonLabel>
-                            <IonInput value={doc.materiaImpartida ?? ""} onIonChange={(e) => updateDocente(i, "materiaImpartida", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Fecha ingreso *</IonLabel>
-                            <IonInput type="date" required disabled={isDisabled("fechaIngreso")} value={doc.fechaIngreso} onIonChange={(e) => updateDocente(i, "fechaIngreso", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">¿Trabajo actual? *</IonLabel>
-                            <IonSelect required disabled={isDisabled("trabajoActual")} value={String(doc.trabajoActual)} onIonChange={(e) => updateDocente(i, "trabajoActual", e.detail.value === "true")}>
-                              <IonSelectOption value="false">No</IonSelectOption>
-                              <IonSelectOption value="true">Sí</IonSelectOption>
-                            </IonSelect>
-                          </IonItem>
-                          {!doc.trabajoActual && (
-                              <IonItem>
-                                <IonLabel position="stacked">Fecha terminación</IonLabel>
-                                <IonInput type="date" value={doc.fechaTerminacion ?? ""} onIonChange={(e) => updateDocente(i, "fechaTerminacion", e.detail.value!)} />
-                              </IonItem>
-                          )}
-                          <IonItem>
-                            <IonLabel position="stacked">Tipo zona *</IonLabel>
-                            <IonSelect required disabled={isDisabled("tipoZona")} value={doc.tipoZona} onIonChange={(e) => updateDocente(i, "tipoZona", e.detail.value)}>
-                              {Object.entries(TipoZonaLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Jornada laboral *</IonLabel>
-                            <IonSelect required disabled={isDisabled("jornadaLaboral")} value={doc.jornadaLaboral} onIonChange={(e) => updateDocente(i, "jornadaLaboral", e.detail.value)}>
-                              {Object.entries(JornadaLaboralLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Horas promedio / mes</IonLabel>
-                            <IonInput type="number" value={doc.horasPromedioMes} onIonChange={(e) => updateDocente(i, "horasPromedioMes", Number(e.detail.value))} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Tiempo experiencia *</IonLabel>
-                            <IonInput type="number" required disabled={isDisabled("tiempoExperiencia")} value={doc.tiempoExperiencia} onIonChange={(e) => updateDocente(i, "tiempoExperiencia", Number(e.detail.value))} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Teléfono</IonLabel>
-                            <IonInput value={doc.telefono ?? ""} onIonChange={(e) => updateDocente(i, "telefono", e.detail.value!)} />
-                          </IonItem>
-                          {!doc.trabajoActual && (
-                              <IonItem>
-                                <IonLabel position="stacked">Motivo retiro</IonLabel>
-                                <IonInput value={doc.motivoRetiro ?? ""} onIonChange={(e) => updateDocente(i, "motivoRetiro", e.detail.value!)} />
-                              </IonItem>
-                          )}
-                          <FileUploadField label="Certificado laboral" value={doc.certificadoLaboral} onChange={(url) => updateDocente(i, "certificadoLaboral", url)} />
-                          <IonItem lines="none">
-                            <IonCheckbox checked={doc.documentoVerificado} onIonChange={(e) => updateDocente(i, "documentoVerificado", e.detail.checked)}>
-                              <IonLabel>Certificado verificado</IonLabel>
-                            </IonCheckbox>
-                          </IonItem>
-                        </div>
-                    );
-                  })}
-                  <IonButton expand="block" onClick={() => setDocentes((p) => [...p, emptyDocente()])}>
-                    + Agregar experiencia docente
-                  </IonButton>
-                </>
-            )}
-
-            <div className="ion-margin-top" style={{ display: "flex", justifyContent: "flex-end" }}>
-              <IonButton type="submit" disabled={saving}>
-                {saving ? <IonSpinner name="crescent" /> : "Guardar sección"}
+        <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+          {["Experiencia General", "Experiencia Docente"].map((t, i) => (
+              <IonButton key={t} fill={tab === i ? "solid" : "outline"} onClick={() => setTab(i)} disabled={saving}>
+                {t}
               </IonButton>
-            </div>
-          </form>
-        </IonContent>
-      </IonPage>
+          ))}
+        </div>
+
+        <form onSubmit={handleSave}>
+          {tab === 0 && (
+              <>
+                <IonText color="medium">
+                  <p>Puede agregar varias experiencias laborales. Para cambiar una experiencia ya guardada, solo puede modificar teléfono, fecha de retiro (si aplica), horas promedio, motivo de retiro, certificado y su verificación.</p>
+                </IonText>
+                {exps.map((exp, i) => {
+                  const hasId = !!exp.id;
+                  const isDisabled = (field: keyof ExperienciaLaboral) => isExpFieldDisabled(field, hasId);
+                  return (
+                      <div key={exp.id ?? exp.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
+                        <h3>
+                          Empleo #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
+                          {hasId ? null : exps.length > 1 && (
+                              <IonButton fill="clear" color="danger" onClick={() => setExps((p) => p.filter((_, idx) => idx !== i))}>
+                                Quitar
+                              </IonButton>
+                          )}
+                        </h3>
+                        <IonItem>
+                          <IonLabel position="stacked">Tipo de entidad *</IonLabel>
+                          <IonSelect required disabled={isDisabled("tipoEntidad")} value={exp.tipoEntidad} onIonChange={(e) => updateExp(i, "tipoEntidad", e.detail.value)}>
+                            {Object.entries(TipoEntidadLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Nombre entidad *</IonLabel>
+                          <IonInput required disabled={isDisabled("nombreEntidad")} value={exp.nombreEntidad} onIonChange={(e) => updateExp(i, "nombreEntidad", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">País *</IonLabel>
+                          <IonInput required disabled={isDisabled("pais")} value={exp.pais} onIonChange={(e) => updateExp(i, "pais", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Departamento *</IonLabel>
+                          <IonInput required disabled={isDisabled("departamento")} value={exp.departamento} onIonChange={(e) => updateExp(i, "departamento", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Municipio *</IonLabel>
+                          <IonInput required disabled={isDisabled("municipio")} value={exp.municipio} onIonChange={(e) => updateExp(i, "municipio", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Dirección entidad *</IonLabel>
+                          <IonInput required disabled={isDisabled("direccionEntidad")} value={exp.direccionEntidad} onIonChange={(e) => updateExp(i, "direccionEntidad", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Teléfono entidad</IonLabel>
+                          <IonInput value={exp.telefono ?? ""} onIonChange={(e) => updateExp(i, "telefono", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Cargo *</IonLabel>
+                          <IonInput required disabled={isDisabled("cargo")} value={exp.cargo} onIonChange={(e) => updateExp(i, "cargo", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Nivel jerárquico *</IonLabel>
+                          <IonSelect required disabled={isDisabled("nivelJerarquiaEmpleo")} value={exp.nivelJerarquiaEmpleo} onIonChange={(e) => updateExp(i, "nivelJerarquiaEmpleo", e.detail.value)}>
+                            {Object.entries(NivelJerarquicoEmpleoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Dependencia *</IonLabel>
+                          <IonInput required disabled={isDisabled("dependencia")} value={exp.dependencia} onIonChange={(e) => updateExp(i, "dependencia", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Fecha ingreso *</IonLabel>
+                          <IonInput type="date" required disabled={isDisabled("fechaIngreso")} value={exp.fechaIngreso} onIonChange={(e) => updateExp(i, "fechaIngreso", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">¿Trabajo actual? *</IonLabel>
+                          <IonSelect required disabled={isDisabled("trabajoActual")} value={String(exp.trabajoActual)} onIonChange={(e) => updateExp(i, "trabajoActual", e.detail.value === "true")}>
+                            <IonSelectOption value="false">No</IonSelectOption>
+                            <IonSelectOption value="true">Sí</IonSelectOption>
+                          </IonSelect>
+                        </IonItem>
+                        {!exp.trabajoActual && (
+                            <IonItem>
+                              <IonLabel position="stacked">Fecha retiro</IonLabel>
+                              <IonInput type="date" value={exp.fechaRetiro ?? ""} onIonChange={(e) => updateExp(i, "fechaRetiro", e.detail.value!)} />
+                            </IonItem>
+                        )}
+                        <IonItem>
+                          <IonLabel position="stacked">Jornada laboral *</IonLabel>
+                          <IonSelect required disabled={isDisabled("jornadaLaboral")} value={exp.jornadaLaboral} onIonChange={(e) => updateExp(i, "jornadaLaboral", e.detail.value)}>
+                            {Object.entries(JornadaLaboralLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Horas promedio / mes</IonLabel>
+                          <IonInput type="number" value={exp.horasPromedioMes} onIonChange={(e) => updateExp(i, "horasPromedioMes", Number(e.detail.value))} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Tiempo experiencia *</IonLabel>
+                          <IonInput type="number" required disabled={isDisabled("tiempoExperiencia")} value={exp.tiempoExperiencia} onIonChange={(e) => updateExp(i, "tiempoExperiencia", Number(e.detail.value))} />
+                        </IonItem>
+                        {!exp.trabajoActual && (
+                            <IonItem>
+                              <IonLabel position="stacked">Motivo retiro</IonLabel>
+                              <IonInput value={exp.motivoRetiro ?? ""} onIonChange={(e) => updateExp(i, "motivoRetiro", e.detail.value!)} />
+                            </IonItem>
+                        )}
+                        <FileUploadField label="Certificado laboral" value={exp.certificadoLaboral} onChange={(url) => updateExp(i, "certificadoLaboral", url)} />
+                        <IonItem lines="none">
+                          <IonCheckbox checked={exp.documentoVerificado} onIonChange={(e) => updateExp(i, "documentoVerificado", e.detail.checked)}>
+                            <IonLabel>Certificado verificado</IonLabel>
+                          </IonCheckbox>
+                        </IonItem>
+                      </div>
+                  );
+                })}
+                <IonButton expand="block" onClick={() => setExps((p) => [...p, emptyExp()])}>
+                  + Agregar otra experiencia
+                </IonButton>
+              </>
+          )}
+
+          {tab === 1 && (
+              <>
+                <IonText color="medium">
+                  <p>Puede agregar varias experiencias docentes. Para cambiar una experiencia ya guardada, solo puede modificar fecha de terminación (si aplica), horas promedio, motivo de retiro, teléfono, materia impartida, certificado y su verificación.</p>
+                </IonText>
+                {docentes.length === 0 && <IonText color="medium"><p>No ha registrado experiencia docente.</p></IonText>}
+                {docentes.map((doc, i) => {
+                  const hasId = !!doc.id;
+                  const isDisabled = (field: keyof ExperienciaLaboralDocente) => isDocenteFieldDisabled(field, hasId);
+                  return (
+                      <div key={doc.id ?? doc.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
+                        <h3>
+                          Docencia #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
+                          {hasId ? null : <IonButton fill="clear" color="danger" onClick={() => setDocentes((p) => p.filter((_, idx) => idx !== i))}>Quitar</IonButton>}
+                        </h3>
+                        <IonItem>
+                          <IonLabel position="stacked">Tipo institución *</IonLabel>
+                          <IonSelect required disabled={isDisabled("tipoInstitucion")} value={doc.tipoInstitucion} onIonChange={(e) => updateDocente(i, "tipoInstitucion", e.detail.value)}>
+                            {Object.entries(TipoInstitucionLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Nombre institución *</IonLabel>
+                          <IonInput required disabled={isDisabled("nombreInstitucion")} value={doc.nombreInstitucion} onIonChange={(e) => updateDocente(i, "nombreInstitucion", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">País *</IonLabel>
+                          <IonInput required disabled={isDisabled("pais")} value={doc.pais} onIonChange={(e) => updateDocente(i, "pais", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Departamento *</IonLabel>
+                          <IonInput required disabled={isDisabled("departamento")} value={doc.departamento} onIonChange={(e) => updateDocente(i, "departamento", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Municipio *</IonLabel>
+                          <IonInput required disabled={isDisabled("municipio")} value={doc.municipio} onIonChange={(e) => updateDocente(i, "municipio", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Nivel académico *</IonLabel>
+                          <IonSelect required disabled={isDisabled("nivelAcademico")} value={doc.nivelAcademico} onIonChange={(e) => updateDocente(i, "nivelAcademico", e.detail.value)}>
+                            {Object.entries(NivelAcademicoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Área conocimiento *</IonLabel>
+                          <IonSelect required disabled={isDisabled("areaConocimiento")} value={doc.areaConocimiento} onIonChange={(e) => updateDocente(i, "areaConocimiento", e.detail.value)}>
+                            {Object.entries(AreaConocimientoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Materia impartida</IonLabel>
+                          <IonInput value={doc.materiaImpartida ?? ""} onIonChange={(e) => updateDocente(i, "materiaImpartida", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Fecha ingreso *</IonLabel>
+                          <IonInput type="date" required disabled={isDisabled("fechaIngreso")} value={doc.fechaIngreso} onIonChange={(e) => updateDocente(i, "fechaIngreso", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">¿Trabajo actual? *</IonLabel>
+                          <IonSelect required disabled={isDisabled("trabajoActual")} value={String(doc.trabajoActual)} onIonChange={(e) => updateDocente(i, "trabajoActual", e.detail.value === "true")}>
+                            <IonSelectOption value="false">No</IonSelectOption>
+                            <IonSelectOption value="true">Sí</IonSelectOption>
+                          </IonSelect>
+                        </IonItem>
+                        {!doc.trabajoActual && (
+                            <IonItem>
+                              <IonLabel position="stacked">Fecha terminación</IonLabel>
+                              <IonInput type="date" value={doc.fechaTerminacion ?? ""} onIonChange={(e) => updateDocente(i, "fechaTerminacion", e.detail.value!)} />
+                            </IonItem>
+                        )}
+                        <IonItem>
+                          <IonLabel position="stacked">Tipo zona *</IonLabel>
+                          <IonSelect required disabled={isDisabled("tipoZona")} value={doc.tipoZona} onIonChange={(e) => updateDocente(i, "tipoZona", e.detail.value)}>
+                            {Object.entries(TipoZonaLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Jornada laboral *</IonLabel>
+                          <IonSelect required disabled={isDisabled("jornadaLaboral")} value={doc.jornadaLaboral} onIonChange={(e) => updateDocente(i, "jornadaLaboral", e.detail.value)}>
+                            {Object.entries(JornadaLaboralLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Horas promedio / mes</IonLabel>
+                          <IonInput type="number" value={doc.horasPromedioMes} onIonChange={(e) => updateDocente(i, "horasPromedioMes", Number(e.detail.value))} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Tiempo experiencia *</IonLabel>
+                          <IonInput type="number" required disabled={isDisabled("tiempoExperiencia")} value={doc.tiempoExperiencia} onIonChange={(e) => updateDocente(i, "tiempoExperiencia", Number(e.detail.value))} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Teléfono</IonLabel>
+                          <IonInput value={doc.telefono ?? ""} onIonChange={(e) => updateDocente(i, "telefono", e.detail.value!)} />
+                        </IonItem>
+                        {!doc.trabajoActual && (
+                            <IonItem>
+                              <IonLabel position="stacked">Motivo retiro</IonLabel>
+                              <IonInput value={doc.motivoRetiro ?? ""} onIonChange={(e) => updateDocente(i, "motivoRetiro", e.detail.value!)} />
+                            </IonItem>
+                        )}
+                        <FileUploadField label="Certificado laboral" value={doc.certificadoLaboral} onChange={(url) => updateDocente(i, "certificadoLaboral", url)} />
+                        <IonItem lines="none">
+                          <IonCheckbox checked={doc.documentoVerificado} onIonChange={(e) => updateDocente(i, "documentoVerificado", e.detail.checked)}>
+                            <IonLabel>Certificado verificado</IonLabel>
+                          </IonCheckbox>
+                        </IonItem>
+                      </div>
+                  );
+                })}
+                <IonButton expand="block" onClick={() => setDocentes((p) => [...p, emptyDocente()])}>
+                  + Agregar experiencia docente
+                </IonButton>
+              </>
+          )}
+
+          <div className="ion-margin-top" style={{ display: "flex", justifyContent: "flex-end" }}>
+            <IonButton type="submit" disabled={saving}>
+              {saving ? <IonSpinner name="crescent" /> : "Guardar sección"}
+            </IonButton>
+          </div>
+        </form>
+      </IonContent>
   );
 };
 

@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonItem,
   IonLabel,
@@ -79,50 +75,43 @@ const DisableUserPage: React.FC = () => {
   };
 
   return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Inhabilitar usuario</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          <form onSubmit={handleSubmit}>
-            <IonItem>
-              <IonLabel position="stacked">Tipo de identificación *</IonLabel>
-              <IonSelect
-                  value={form.tipoIdentificacion}
-                  onIonChange={(e) => handleChange("tipoIdentificacion", e.detail.value)}
-              >
-                {Object.entries(TipoIdentificacionLabels).map(([val, label]) => (
-                    <IonSelectOption key={val} value={val}>{label}</IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Número de identificación *</IonLabel>
-              <IonInput
-                  value={form.numeroIdentificacion}
-                  onIonChange={(e) => handleChange("numeroIdentificacion", e.detail.value!)}
-              />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Fecha final *</IonLabel>
-              <IonInput
-                  type="datetime-local"
-                  value={form.fechaFin}
-                  onIonChange={(e) => handleChange("fechaFin", e.detail.value!)}
-              />
-            </IonItem>
+      <IonContent className="ion-padding">
+        <form onSubmit={handleSubmit}>
+          <IonItem>
+            <IonLabel position="stacked">Tipo de identificación *</IonLabel>
+            <IonSelect
+                value={form.tipoIdentificacion}
+                onIonChange={(e) => handleChange("tipoIdentificacion", e.detail.value)}
+            >
+              {Object.entries(TipoIdentificacionLabels).map(([val, label]) => (
+                  <IonSelectOption key={val} value={val}>{label}</IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Número de identificación *</IonLabel>
+            <IonInput
+                value={form.numeroIdentificacion}
+                onIonChange={(e) => handleChange("numeroIdentificacion", e.detail.value!)}
+            />
+          </IonItem>
+          <IonItem>
+            <IonLabel position="stacked">Fecha final *</IonLabel>
+            <IonInput
+                type="datetime-local"
+                value={form.fechaFin}
+                onIonChange={(e) => handleChange("fechaFin", e.detail.value!)}
+            />
+          </IonItem>
 
-            <IonButton expand="block" type="submit" disabled={loading} className="ion-margin-top" color="danger">
-              {loading ? <IonSpinner name="crescent" /> : "Inhabilitar usuario"}
-            </IonButton>
-          </form>
+          <IonButton expand="block" type="submit" disabled={loading} className="ion-margin-top" color="danger">
+            {loading ? <IonSpinner name="crescent" /> : "Inhabilitar usuario"}
+          </IonButton>
+        </form>
 
-          <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
-          <IonToast isOpen={!!success} message={success} duration={3000} onDidDismiss={() => setSuccess("")} />
-        </IonContent>
-      </IonPage>
+        <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
+        <IonToast isOpen={!!success} message={success} duration={3000} onDidDismiss={() => setSuccess("")} />
+      </IonContent>
   );
 };
 

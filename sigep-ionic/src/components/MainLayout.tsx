@@ -1,6 +1,6 @@
 import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
 import {
+    IonSplitPane,
     IonMenu,
     IonHeader,
     IonToolbar,
@@ -10,10 +10,8 @@ import {
     IonItem,
     IonLabel,
     IonIcon,
-    IonMenuToggle,
     IonButton,
     IonButtons,
-    IonMenuButton,
 } from "@ionic/react";
 import {
     homeOutline,
@@ -26,56 +24,29 @@ import {
     keyOutline,
     logOutOutline,
 } from "ionicons/icons";
+import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { RolUsuario, TipoIdentificacionLabels } from "../types";
+import { RolUsuario } from "../types";
 
-interface NavItem {
-    label: string;
-    path: string;
-    icon: string;
+interface MainLayoutProps {
+    children: React.ReactNode;
 }
 
-const mainNavItems: NavItem[] = [
-    { label: "Inicio", path: "/dashboard", icon: homeOutline },
-    { label: "Datos Personales", path: "/curriculum/datos-personales", icon: personOutline },
-    { label: "Educación", path: "/curriculum/educacion", icon: schoolOutline },
-    { label: "Experiencia Laboral", path: "/curriculum/experiencia", icon: briefcaseOutline },
-    { label: "Gerencia Pública", path: "/curriculum/gerencia-publica", icon: businessOutline },
-];
-
-const managementNavItems: NavItem[] = [
-    { label: "Crear usuario", path: "/usuarios/crear", icon: peopleOutline },
-    { label: "Inhabilitar usuario", path: "/usuarios/inhabilitar", icon: banOutline },
-];
-
-const profileNavItems: NavItem[] = [
-    { label: "Cambiar contraseña", path: "/perfil/cambiar-contrasena", icon: keyOutline },
-];
-
-const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     const { user, logout } = useAuth();
-    const location = useLocation();
     const history = useHistory();
+    const location = useLocation();
 
     const handleLogout = () => {
         logout();
         history.push("/login");
     };
 
-    const initials = user?.numeroIdentificacion?.slice(-2).toUpperCase() ?? "US";
-    const tipoIdentificacionLabel = user?.tipoIdentificacion
-        ? TipoIdentificacionLabels[user.tipoIdentificacion]
-        : "Usuario";
-
-    const roleLabel = user?.rol === RolUsuario.JefeDeTalentoHumano
-        ? "Jefe de Talento Humano"
-        : "Servidor Público";
-
     const canManageUsers = user?.rol === RolUsuario.JefeDeTalentoHumano;
 
     return (
-        <>
-            <IonMenu contentId="main-content" side="start" type="overlay">
+        <IonSplitPane contentId="main-content" when="md">
+            <IonMenu contentId="main-content" type="overlay">
                 <IonHeader>
                     <IonToolbar color="primary">
                         <IonTitle>SIGEP II</IonTitle>
@@ -83,79 +54,86 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </IonHeader>
                 <IonContent>
                     <IonList>
-                        <IonItem lines="none" className="ion-margin-vertical">
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                <div className="avatar" style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--ion-color-primary)", display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}>
-                                    {initials}
-                                </div>
-                                <div>
-                                    <div><strong>{user?.numeroIdentificacion ?? "Usuario"}</strong></div>
-                                    <div style={{ fontSize: "0.8rem" }}>{roleLabel}</div>
-                                </div>
-                            </div>
+                        <IonItem
+                            button
+                            routerLink="/dashboard"
+                            routerDirection="none"
+                            color={location.pathname === "/dashboard" ? "primary" : undefined}
+                        >
+                            <IonIcon icon={homeOutline} slot="start" />
+                            <IonLabel>Inicio</IonLabel>
                         </IonItem>
-
-                        <IonItem lines="full">
-                            <IonLabel>Principal</IonLabel>
+                        <IonItem
+                            button
+                            routerLink="/curriculum/datos-personales"
+                            routerDirection="none"
+                            color={location.pathname === "/curriculum/datos-personales" ? "primary" : undefined}
+                        >
+                            <IonIcon icon={personOutline} slot="start" />
+                            <IonLabel>Datos Personales</IonLabel>
                         </IonItem>
-                        {mainNavItems.map((item) => (
-                            <IonMenuToggle key={item.path}>
-                                <IonItem
-                                    button
-                                    routerLink={item.path}
-                                    routerDirection="none"
-                                    color={location.pathname === item.path ? "primary" : undefined}
-                                >
-                                    <IonIcon icon={item.icon} slot="start" />
-                                    <IonLabel>{item.label}</IonLabel>
-                                </IonItem>
-                            </IonMenuToggle>
-                        ))}
-
+                        <IonItem
+                            button
+                            routerLink="/curriculum/educacion"
+                            routerDirection="none"
+                            color={location.pathname === "/curriculum/educacion" ? "primary" : undefined}
+                        >
+                            <IonIcon icon={schoolOutline} slot="start" />
+                            <IonLabel>Educación</IonLabel>
+                        </IonItem>
+                        <IonItem
+                            button
+                            routerLink="/curriculum/experiencia"
+                            routerDirection="none"
+                            color={location.pathname === "/curriculum/experiencia" ? "primary" : undefined}
+                        >
+                            <IonIcon icon={briefcaseOutline} slot="start" />
+                            <IonLabel>Experiencia Laboral</IonLabel>
+                        </IonItem>
+                        <IonItem
+                            button
+                            routerLink="/curriculum/gerencia-publica"
+                            routerDirection="none"
+                            color={location.pathname === "/curriculum/gerencia-publica" ? "primary" : undefined}
+                        >
+                            <IonIcon icon={businessOutline} slot="start" />
+                            <IonLabel>Gerencia Pública</IonLabel>
+                        </IonItem>
+                        <IonItem
+                            button
+                            routerLink="/perfil/cambiar-contrasena"
+                            routerDirection="none"
+                            color={location.pathname === "/perfil/cambiar-contrasena" ? "primary" : undefined}
+                        >
+                            <IonIcon icon={keyOutline} slot="start" />
+                            <IonLabel>Cambiar Contraseña</IonLabel>
+                        </IonItem>
                         {canManageUsers && (
                             <>
-                                <IonItem lines="full">
-                                    <IonLabel>Usuarios</IonLabel>
-                                </IonItem>
-                                {managementNavItems.map((item) => (
-                                    <IonMenuToggle key={item.path}>
-                                        <IonItem
-                                            button
-                                            routerLink={item.path}
-                                            routerDirection="none"
-                                            color={location.pathname === item.path ? "primary" : undefined}
-                                        >
-                                            <IonIcon icon={item.icon} slot="start" />
-                                            <IonLabel>{item.label}</IonLabel>
-                                        </IonItem>
-                                    </IonMenuToggle>
-                                ))}
-                            </>
-                        )}
-
-                        <IonItem lines="full">
-                            <IonLabel>Perfil</IonLabel>
-                        </IonItem>
-                        {profileNavItems.map((item) => (
-                            <IonMenuToggle key={item.path}>
                                 <IonItem
                                     button
-                                    routerLink={item.path}
+                                    routerLink="/usuarios/crear"
                                     routerDirection="none"
-                                    color={location.pathname === item.path ? "primary" : undefined}
+                                    color={location.pathname === "/usuarios/crear" ? "primary" : undefined}
                                 >
-                                    <IonIcon icon={item.icon} slot="start" />
-                                    <IonLabel>{item.label}</IonLabel>
+                                    <IonIcon icon={peopleOutline} slot="start" />
+                                    <IonLabel>Crear Usuario</IonLabel>
                                 </IonItem>
-                            </IonMenuToggle>
-                        ))}
-
-                        <IonMenuToggle>
-                            <IonItem button onClick={handleLogout}>
-                                <IonIcon icon={logOutOutline} slot="start" />
-                                <IonLabel>Salir</IonLabel>
-                            </IonItem>
-                        </IonMenuToggle>
+                                <IonItem
+                                    button
+                                    routerLink="/usuarios/inhabilitar"
+                                    routerDirection="none"
+                                    color={location.pathname === "/usuarios/inhabilitar" ? "primary" : undefined}
+                                >
+                                    <IonIcon icon={banOutline} slot="start" />
+                                    <IonLabel>Inhabilitar Usuario</IonLabel>
+                                </IonItem>
+                            </>
+                        )}
+                        <IonItem button onClick={handleLogout}>
+                            <IonIcon icon={logOutOutline} slot="start" />
+                            <IonLabel>Salir</IonLabel>
+                        </IonItem>
                     </IonList>
                 </IonContent>
             </IonMenu>
@@ -163,9 +141,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div id="main-content">
                 <IonHeader>
                     <IonToolbar>
-                        <IonButtons slot="start">
-                            <IonMenuButton />
-                        </IonButtons>
                         <IonTitle>SIGEP II</IonTitle>
                         <IonButtons slot="end">
                             <IonButton onClick={handleLogout}>
@@ -174,11 +149,11 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                         </IonButtons>
                     </IonToolbar>
                 </IonHeader>
-                <IonContent>
+                <IonContent className="ion-padding">
                     {children}
                 </IonContent>
             </div>
-        </>
+        </IonSplitPane>
     );
 };
 

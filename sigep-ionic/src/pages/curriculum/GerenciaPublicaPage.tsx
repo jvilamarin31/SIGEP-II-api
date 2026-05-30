@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonItem,
   IonLabel,
@@ -370,205 +366,192 @@ const GerenciaPublicaPage: React.FC = () => {
 
   if (personaExpuesta === null && loading) {
     return (
-        <IonPage>
-          <IonHeader><IonToolbar><IonTitle>Gerencia Pública</IonTitle></IonToolbar></IonHeader>
-          <IonContent className="ion-padding">
-            <IonText color="medium"><p>Verificando permisos...</p></IonText>
-          </IonContent>
-        </IonPage>
+        <IonContent className="ion-padding">
+          <IonText color="medium"><p>Verificando permisos...</p></IonText>
+        </IonContent>
     );
   }
 
   if (personaExpuesta !== true) {
     return (
-        <IonPage>
-          <IonHeader><IonToolbar><IonTitle>Gerencia Pública</IonTitle></IonToolbar></IonHeader>
-          <IonContent className="ion-padding">
-            <div style={{ textAlign: "center", marginTop: "32px" }}>
-              <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔒</div>
-              <h3>Acceso restringido</h3>
-              <p>Para registrar información en esta sección debes marcar la casilla <strong>“Persona expuesta políticamente”</strong> en Datos Personales → Datos Básicos.</p>
-              <IonButton routerLink="/curriculum/datos-personales" expand="block">
-                Ir a Datos Personales
-              </IonButton>
-            </div>
-          </IonContent>
-        </IonPage>
+        <IonContent className="ion-padding">
+          <div style={{ textAlign: "center", marginTop: "32px" }}>
+            <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔒</div>
+            <h3>Acceso restringido</h3>
+            <p>Para registrar información en esta sección debes marcar la casilla <strong>“Persona expuesta políticamente”</strong> en Datos Personales → Datos Básicos.</p>
+            <IonButton routerLink="/curriculum/datos-personales" expand="block">
+              Ir a Datos Personales
+            </IonButton>
+          </div>
+        </IonContent>
     );
   }
 
   return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Gerencia Pública</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          {loading && <IonText color="medium"><p>Cargando registros guardados...</p></IonText>}
-          <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
-          <IonToast isOpen={saved} message="✅ Registro guardado correctamente." duration={3000} onDidDismiss={() => setSaved(false)} />
+      <IonContent className="ion-padding">
+        {loading && <IonText color="medium"><p>Cargando registros guardados...</p></IonText>}
+        <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
+        <IonToast isOpen={saved} message="✅ Registro guardado correctamente." duration={3000} onDidDismiss={() => setSaved(false)} />
 
-          <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
-            {tabs.map((item, i) => (
-                <IonButton key={item} fill={tab === i ? "solid" : "outline"} onClick={() => setTab(i)} disabled={saving}>
-                  {item}
-                </IonButton>
-            ))}
-          </div>
-
-          <div style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
-            <strong>Registros existentes:</strong>
-            {listaActual.length === 0 ? (
-                <p className="text-muted" style={{ marginTop: 8 }}>No hay registros guardados para esta sección.</p>
-            ) : (
-                <div style={{ marginTop: 12 }}>
-                  {listaActual.map((item, index) => (
-                      <DetailItem key={item.id as string ?? index} item={item} type={currentTabName} />
-                  ))}
-                </div>
-            )}
-          </div>
-
-          <form onSubmit={handleSave}>
-            {tab === 0 && (
-                <>
-                  <IonItem>
-                    <IonLabel position="stacked">Artículo *</IonLabel>
-                    <IonSelect required value={publicacion.articulo} onIonChange={(e) => setPublicacion(p => ({ ...p, articulo: e.detail.value }))}>
-                      {Object.entries(articuloLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                    </IonSelect>
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Nombre artículo *</IonLabel>
-                    <IonInput required value={publicacion.nombreArticulo} onIonChange={(e) => setPublicacion(p => ({ ...p, nombreArticulo: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Resultado investigación *</IonLabel>
-                    <IonSelect required value={publicacion.libroResultadoInvestigacion} onIonChange={(e) => setPublicacion(p => ({ ...p, libroResultadoInvestigacion: e.detail.value }))}>
-                      {Object.entries(libroLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                    </IonSelect>
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Libro / revista *</IonLabel>
-                    <IonInput required value={publicacion.nombreLibroRevista} onIonChange={(e) => setPublicacion(p => ({ ...p, nombreLibroRevista: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Tipo producción *</IonLabel>
-                    <IonSelect required value={publicacion.tiposProduccionBibliografica} onIonChange={(e) => setPublicacion(p => ({ ...p, tiposProduccionBibliografica: e.detail.value }))}>
-                      {Object.entries(produccionLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                    </IonSelect>
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Nombre publicación *</IonLabel>
-                    <IonInput required value={publicacion.nombrePublicacion} onIonChange={(e) => setPublicacion(p => ({ ...p, nombrePublicacion: e.detail.value! }))} />
-                  </IonItem>
-                </>
-            )}
-
-            {tab === 1 && (
-                <>
-                  <IonItem>
-                    <IonLabel position="stacked">Tipo *</IonLabel>
-                    <IonSelect required value={premio.tipo} onIonChange={(e) => setPremio(p => ({ ...p, tipo: e.detail.value }))}>
-                      {Object.entries(premioLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                    </IonSelect>
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Entidad / organización *</IonLabel>
-                    <IonInput required value={premio.nombreEntidadOrganizacion} onIonChange={(e) => setPremio(p => ({ ...p, nombreEntidadOrganizacion: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Fecha *</IonLabel>
-                    <IonInput type="date" required value={premio.fecha} onIonChange={(e) => setPremio(p => ({ ...p, fecha: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">País *</IonLabel>
-                    <IonInput required value={premio.pais} onIonChange={(e) => setPremio(p => ({ ...p, pais: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Departamento *</IonLabel>
-                    <IonInput required value={premio.departamento} onIonChange={(e) => setPremio(p => ({ ...p, departamento: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Municipio *</IonLabel>
-                    <IonInput required value={premio.municipio} onIonChange={(e) => setPremio(p => ({ ...p, municipio: e.detail.value! }))} />
-                  </IonItem>
-                </>
-            )}
-
-            {tab === 2 && (
-                <>
-                  <IonItem>
-                    <IonLabel position="stacked">Nombre *</IonLabel>
-                    <IonInput required value={proyecto.nombre} onIonChange={(e) => setProyecto(p => ({ ...p, nombre: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Rol desempeñado *</IonLabel>
-                    <IonInput required value={proyecto.rolDesempeñado} onIonChange={(e) => setProyecto(p => ({ ...p, rolDesempeñado: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Entidad / organización *</IonLabel>
-                    <IonInput required value={proyecto.nombreEntidadOrganizacion} onIonChange={(e) => setProyecto(p => ({ ...p, nombreEntidadOrganizacion: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">País *</IonLabel>
-                    <IonInput required value={proyecto.pais} onIonChange={(e) => setProyecto(p => ({ ...p, pais: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Departamento *</IonLabel>
-                    <IonInput required value={proyecto.departamento} onIonChange={(e) => setProyecto(p => ({ ...p, departamento: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Municipio *</IonLabel>
-                    <IonInput required value={proyecto.municipio} onIonChange={(e) => setProyecto(p => ({ ...p, municipio: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Fecha inicio *</IonLabel>
-                    <IonInput type="date" required value={proyecto.fechaInicio} onIonChange={(e) => setProyecto(p => ({ ...p, fechaInicio: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Fecha terminación *</IonLabel>
-                    <IonInput type="date" required value={proyecto.fechaTerminacion} onIonChange={(e) => setProyecto(p => ({ ...p, fechaTerminacion: e.detail.value! }))} />
-                  </IonItem>
-                </>
-            )}
-
-            {tab === 3 && (
-                <>
-                  <IonItem>
-                    <IonLabel position="stacked">Nombre corporación *</IonLabel>
-                    <IonInput required value={corporacion.nombreCorporacion} onIonChange={(e) => setCorporacion(p => ({ ...p, nombreCorporacion: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Razón social institución *</IonLabel>
-                    <IonInput required value={corporacion.nombreRazonSocialInstitucion} onIonChange={(e) => setCorporacion(p => ({ ...p, nombreRazonSocialInstitucion: e.detail.value! }))} />
-                  </IonItem>
-                  <IonItem>
-                    <IonLabel position="stacked">Entidad / organización *</IonLabel>
-                    <IonInput required value={corporacion.nombreEntidadOrganizacion} onIonChange={(e) => setCorporacion(p => ({ ...p, nombreEntidadOrganizacion: e.detail.value! }))} />
-                  </IonItem>
-                </>
-            )}
-
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "24px" }}>
-              <IonButton disabled={tab === 0 || saving} onClick={() => setTab(tab - 1)} fill="outline">
-                ← Anterior
+        <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
+          {tabs.map((item, i) => (
+              <IonButton key={item} fill={tab === i ? "solid" : "outline"} onClick={() => setTab(i)} disabled={saving}>
+                {item}
               </IonButton>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <IonButton type="submit" disabled={saving}>
-                  {saving ? <IonSpinner name="crescent" /> : "✓ Crear registro"}
-                </IonButton>
-                {tab < tabs.length - 1 && (
-                    <IonButton onClick={() => setTab(tab + 1)} disabled={saving}>
-                      Siguiente →
-                    </IonButton>
-                )}
+          ))}
+        </div>
+
+        <div style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
+          <strong>Registros existentes:</strong>
+          {listaActual.length === 0 ? (
+              <p className="text-muted" style={{ marginTop: 8 }}>No hay registros guardados para esta sección.</p>
+          ) : (
+              <div style={{ marginTop: 12 }}>
+                {listaActual.map((item, index) => (
+                    <DetailItem key={item.id as string ?? index} item={item} type={currentTabName} />
+                ))}
               </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSave}>
+          {tab === 0 && (
+              <>
+                <IonItem>
+                  <IonLabel position="stacked">Artículo *</IonLabel>
+                  <IonSelect required value={publicacion.articulo} onIonChange={(e) => setPublicacion(p => ({ ...p, articulo: e.detail.value }))}>
+                    {Object.entries(articuloLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                  </IonSelect>
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Nombre artículo *</IonLabel>
+                  <IonInput required value={publicacion.nombreArticulo} onIonChange={(e) => setPublicacion(p => ({ ...p, nombreArticulo: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Resultado investigación *</IonLabel>
+                  <IonSelect required value={publicacion.libroResultadoInvestigacion} onIonChange={(e) => setPublicacion(p => ({ ...p, libroResultadoInvestigacion: e.detail.value }))}>
+                    {Object.entries(libroLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                  </IonSelect>
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Libro / revista *</IonLabel>
+                  <IonInput required value={publicacion.nombreLibroRevista} onIonChange={(e) => setPublicacion(p => ({ ...p, nombreLibroRevista: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Tipo producción *</IonLabel>
+                  <IonSelect required value={publicacion.tiposProduccionBibliografica} onIonChange={(e) => setPublicacion(p => ({ ...p, tiposProduccionBibliografica: e.detail.value }))}>
+                    {Object.entries(produccionLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                  </IonSelect>
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Nombre publicación *</IonLabel>
+                  <IonInput required value={publicacion.nombrePublicacion} onIonChange={(e) => setPublicacion(p => ({ ...p, nombrePublicacion: e.detail.value! }))} />
+                </IonItem>
+              </>
+          )}
+
+          {tab === 1 && (
+              <>
+                <IonItem>
+                  <IonLabel position="stacked">Tipo *</IonLabel>
+                  <IonSelect required value={premio.tipo} onIonChange={(e) => setPremio(p => ({ ...p, tipo: e.detail.value }))}>
+                    {Object.entries(premioLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                  </IonSelect>
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Entidad / organización *</IonLabel>
+                  <IonInput required value={premio.nombreEntidadOrganizacion} onIonChange={(e) => setPremio(p => ({ ...p, nombreEntidadOrganizacion: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Fecha *</IonLabel>
+                  <IonInput type="date" required value={premio.fecha} onIonChange={(e) => setPremio(p => ({ ...p, fecha: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">País *</IonLabel>
+                  <IonInput required value={premio.pais} onIonChange={(e) => setPremio(p => ({ ...p, pais: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Departamento *</IonLabel>
+                  <IonInput required value={premio.departamento} onIonChange={(e) => setPremio(p => ({ ...p, departamento: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Municipio *</IonLabel>
+                  <IonInput required value={premio.municipio} onIonChange={(e) => setPremio(p => ({ ...p, municipio: e.detail.value! }))} />
+                </IonItem>
+              </>
+          )}
+
+          {tab === 2 && (
+              <>
+                <IonItem>
+                  <IonLabel position="stacked">Nombre *</IonLabel>
+                  <IonInput required value={proyecto.nombre} onIonChange={(e) => setProyecto(p => ({ ...p, nombre: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Rol desempeñado *</IonLabel>
+                  <IonInput required value={proyecto.rolDesempeñado} onIonChange={(e) => setProyecto(p => ({ ...p, rolDesempeñado: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Entidad / organización *</IonLabel>
+                  <IonInput required value={proyecto.nombreEntidadOrganizacion} onIonChange={(e) => setProyecto(p => ({ ...p, nombreEntidadOrganizacion: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">País *</IonLabel>
+                  <IonInput required value={proyecto.pais} onIonChange={(e) => setProyecto(p => ({ ...p, pais: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Departamento *</IonLabel>
+                  <IonInput required value={proyecto.departamento} onIonChange={(e) => setProyecto(p => ({ ...p, departamento: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Municipio *</IonLabel>
+                  <IonInput required value={proyecto.municipio} onIonChange={(e) => setProyecto(p => ({ ...p, municipio: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Fecha inicio *</IonLabel>
+                  <IonInput type="date" required value={proyecto.fechaInicio} onIonChange={(e) => setProyecto(p => ({ ...p, fechaInicio: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Fecha terminación *</IonLabel>
+                  <IonInput type="date" required value={proyecto.fechaTerminacion} onIonChange={(e) => setProyecto(p => ({ ...p, fechaTerminacion: e.detail.value! }))} />
+                </IonItem>
+              </>
+          )}
+
+          {tab === 3 && (
+              <>
+                <IonItem>
+                  <IonLabel position="stacked">Nombre corporación *</IonLabel>
+                  <IonInput required value={corporacion.nombreCorporacion} onIonChange={(e) => setCorporacion(p => ({ ...p, nombreCorporacion: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Razón social institución *</IonLabel>
+                  <IonInput required value={corporacion.nombreRazonSocialInstitucion} onIonChange={(e) => setCorporacion(p => ({ ...p, nombreRazonSocialInstitucion: e.detail.value! }))} />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Entidad / organización *</IonLabel>
+                  <IonInput required value={corporacion.nombreEntidadOrganizacion} onIonChange={(e) => setCorporacion(p => ({ ...p, nombreEntidadOrganizacion: e.detail.value! }))} />
+                </IonItem>
+              </>
+          )}
+
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "24px" }}>
+            <IonButton disabled={tab === 0 || saving} onClick={() => setTab(tab - 1)} fill="outline">
+              ← Anterior
+            </IonButton>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <IonButton type="submit" disabled={saving}>
+                {saving ? <IonSpinner name="crescent" /> : "✓ Crear registro"}
+              </IonButton>
+              {tab < tabs.length - 1 && (
+                  <IonButton onClick={() => setTab(tab + 1)} disabled={saving}>
+                    Siguiente →
+                  </IonButton>
+              )}
             </div>
-          </form>
-        </IonContent>
-      </IonPage>
+          </div>
+        </form>
+      </IonContent>
   );
 };
 

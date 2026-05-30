@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonItem,
   IonLabel,
@@ -452,246 +448,239 @@ const EducacionPage: React.FC = () => {
   };
 
   return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Educación</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          {loading && (
-              <IonText color="medium">
-                <p>Cargando educación guardada...</p>
-              </IonText>
-          )}
-          <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
-          <IonToast isOpen={saved} message="✅ Información guardada correctamente." duration={3000} onDidDismiss={() => setSaved(false)} />
+      <IonContent className="ion-padding">
+        {loading && (
+            <IonText color="medium">
+              <p>Cargando educación guardada...</p>
+            </IonText>
+        )}
+        <IonAlert isOpen={!!error} message={error} buttons={["OK"]} onDidDismiss={() => setError("")} />
+        <IonToast isOpen={saved} message="✅ Información guardada correctamente." duration={3000} onDidDismiss={() => setSaved(false)} />
 
-          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-            {["Formación Académica", "Idiomas", "Educación para el Trabajo"].map((t, i) => (
-                <IonButton key={t} fill={tab === i ? "solid" : "outline"} onClick={() => setTab(i)} disabled={saving}>
-                  {t}
-                </IonButton>
-            ))}
-          </div>
-
-          <form onSubmit={handleSave}>
-            {tab === 0 && (
-                <>
-                  <IonText color="medium">
-                    <p>Puede agregar varias formaciones. Guarde los cambios cuando termine de completar la información.</p>
-                  </IonText>
-                  {formaciones.map((f, i) => {
-                    const hasId = !!f.id;
-                    const isDisabled = (field: keyof FormacionAcademica) => isFormacionFieldDisabled(field, hasId);
-                    return (
-                        <div key={f.id ?? f.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
-                          <h3>
-                            Estudio #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
-                            {hasId ? null : formaciones.length > 1 && (
-                                <IonButton fill="clear" color="danger" onClick={() => setFormaciones((prev) => prev.filter((_, idx) => idx !== i))}>
-                                  Quitar
-                                </IonButton>
-                            )}
-                          </h3>
-                          <IonItem>
-                            <IonLabel position="stacked">Nivel académico *</IonLabel>
-                            <IonSelect required disabled={isDisabled("nivelAcademico")} value={f.nivelAcademico} onIonChange={(e) => updateFormacion(i, "nivelAcademico", e.detail.value)}>
-                              {Object.entries(NivelAcademicoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Nivel de formación *</IonLabel>
-                            <IonSelect required disabled={isDisabled("nivelFormacion")} value={f.nivelFormacion} onIonChange={(e) => updateFormacion(i, "nivelFormacion", e.detail.value)}>
-                              {Object.entries(NivelFormacionLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Área de conocimiento</IonLabel>
-                            <IonSelect value={f.areaConocimiento} onIonChange={(e) => updateFormacion(i, "areaConocimiento", e.detail.value)}>
-                              {Object.entries(AreaConocimientoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">País *</IonLabel>
-                            <IonInput required disabled={isDisabled("pais")} value={f.pais} onIonChange={(e) => updateFormacion(i, "pais", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Institución *</IonLabel>
-                            <IonInput required disabled={isDisabled("institucionFormacionAcademica")} value={f.institucionFormacionAcademica} onIonChange={(e) => updateFormacion(i, "institucionFormacionAcademica", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Programa académico</IonLabel>
-                            <IonInput value={f.programaAcademico} onIonChange={(e) => updateFormacion(i, "programaAcademico", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Título obtenido *</IonLabel>
-                            <IonInput required disabled={isDisabled("tituloObtenido")} value={f.tituloObtenido} onIonChange={(e) => updateFormacion(i, "tituloObtenido", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Estado del estudio *</IonLabel>
-                            <IonSelect required value={f.estadoEstudio} onIonChange={(e) => updateFormacion(i, "estadoEstudio", e.detail.value)}>
-                              {Object.entries(EstadoEstudioLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Semestres aprobados</IonLabel>
-                            <IonInput type="number" value={f.semestresAprobados ?? ""} onIonChange={(e) => updateFormacion(i, "semestresAprobados", e.detail.value ? Number(e.detail.value) : undefined)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Fecha terminación materias</IonLabel>
-                            <IonInput type="date" disabled={f.estadoEstudio === EstadoEstudio.EnProceso} value={f.fechaTerminacionMaterias} onIonChange={(e) => updateFormacion(i, "fechaTerminacionMaterias", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Fecha de grado</IonLabel>
-                            <IonInput type="date" disabled={f.estadoEstudio === EstadoEstudio.EnProceso} value={f.fechaGrado} onIonChange={(e) => updateFormacion(i, "fechaGrado", e.detail.value!)} />
-                          </IonItem>
-                          <FileUploadField label="Soporte de educación formal" value={f.archivoEducacionFormal} onChange={(url) => updateFormacion(i, "archivoEducacionFormal", url)} />
-                          <FileUploadField label="Tarjeta profesional" value={f.archivoTarjetaProfesional ?? f.archivoTarjetaProfesioal} onChange={(url) => {
-                            updateFormacion(i, "archivoTarjetaProfesional", url);
-                            updateFormacion(i, "archivoTarjetaProfesioal", url);
-                          }} />
-                          <IonItem lines="none">
-                            <IonCheckbox checked={f.estudioConvalidado} onIonChange={(e) => updateFormacion(i, "estudioConvalidado", e.detail.checked)}>
-                              <IonLabel>¿Estudio convalidado?</IonLabel>
-                            </IonCheckbox>
-                          </IonItem>
-                          {f.estudioConvalidado && (
-                              <IonItem>
-                                <IonLabel position="stacked">Fecha de convalidación *</IonLabel>
-                                <IonInput type="date" required value={f.fechaConvalidacion ?? ""} onIonChange={(e) => updateFormacion(i, "fechaConvalidacion", e.detail.value!)} />
-                              </IonItem>
-                          )}
-                        </div>
-                    );
-                  })}
-                  <IonButton expand="block" onClick={() => setFormaciones((prev) => [...prev, emptyFormacion()])}>
-                    + Agregar otra formación
-                  </IonButton>
-                </>
-            )}
-
-            {tab === 1 && (
-                <>
-                  <IonText color="medium">
-                    <p>Puede agregar varios idiomas. Para cambiar un idioma ya guardado, solo puede modificar el certificado.</p>
-                  </IonText>
-                  {idiomas.length === 0 && <IonText color="medium"><p>No ha registrado idiomas. Agregue uno a continuación.</p></IonText>}
-                  {idiomas.map((idioma, i) => {
-                    const hasId = !!idioma.id;
-                    const isDisabled = (field: keyof Idioma) => isIdiomaFieldDisabled(field, hasId);
-                    return (
-                        <div key={idioma.id ?? idioma.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
-                          <h3>
-                            Idioma #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
-                            {hasId ? null : <IonButton fill="clear" color="danger" onClick={() => setIdiomas((prev) => prev.filter((_, idx) => idx !== i))}>Quitar</IonButton>}
-                          </h3>
-                          <IonItem>
-                            <IonLabel position="stacked">Idioma *</IonLabel>
-                            <IonInput required disabled={isDisabled("idioma")} value={idioma.idioma} onIonChange={(e) => updateIdioma(i, "idioma", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Conversación *</IonLabel>
-                            <IonSelect required disabled={isDisabled("conversacion")} value={idioma.conversacion} onIonChange={(e) => updateIdioma(i, "conversacion", e.detail.value)}>
-                              {Object.entries(IdiomaNivelLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Lectura *</IonLabel>
-                            <IonSelect required disabled={isDisabled("lectura")} value={idioma.lectura} onIonChange={(e) => updateIdioma(i, "lectura", e.detail.value)}>
-                              {Object.entries(IdiomaNivelLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Redacción *</IonLabel>
-                            <IonSelect required disabled={isDisabled("redaccion")} value={idioma.redaccion} onIonChange={(e) => updateIdioma(i, "redaccion", e.detail.value)}>
-                              {Object.entries(IdiomaNivelLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Fecha del certificado *</IonLabel>
-                            <IonInput type="date" required disabled={isDisabled("fechaCertificado")} value={idioma.fechaCertificado} onIonChange={(e) => updateIdioma(i, "fechaCertificado", e.detail.value!)} />
-                          </IonItem>
-                          <FileUploadField label="Certificado" value={idioma.certificado} onChange={(url) => updateIdioma(i, "certificado", url)} />
-                          <IonItem lines="none">
-                            <IonCheckbox checked={idioma.lenguaNativa} onIonChange={(e) => updateIdioma(i, "lenguaNativa", e.detail.checked)} disabled={isDisabled("lenguaNativa")}>
-                              <IonLabel>¿Es lengua nativa?</IonLabel>
-                            </IonCheckbox>
-                          </IonItem>
-                        </div>
-                    );
-                  })}
-                  <IonButton expand="block" onClick={() => setIdiomas((prev) => [...prev, emptyIdioma()])}>
-                    + Agregar idioma
-                  </IonButton>
-                </>
-            )}
-
-            {tab === 2 && (
-                <>
-                  <IonText color="medium">
-                    <p>Puede agregar varias capacitaciones. Para cambiar una capacitación ya guardada, solo puede modificar el diploma, acta o certificado.</p>
-                  </IonText>
-                  {trabajos.length === 0 && <IonText color="medium"><p>No ha registrado educación para el trabajo.</p></IonText>}
-                  {trabajos.map((trabajo, i) => {
-                    const hasId = !!trabajo.id;
-                    const isDisabled = (field: keyof EducacionTrabajo) => isTrabajoFieldDisabled(field, hasId);
-                    return (
-                        <div key={trabajo.id ?? trabajo.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
-                          <h3>
-                            Capacitación #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
-                            {hasId ? null : <IonButton fill="clear" color="danger" onClick={() => setTrabajos((prev) => prev.filter((_, idx) => idx !== i))}>Quitar</IonButton>}
-                          </h3>
-                          <IonItem>
-                            <IonLabel position="stacked">Nombre *</IonLabel>
-                            <IonInput required disabled={isDisabled("nombre")} value={trabajo.nombre} onIonChange={(e) => updateTrabajo(i, "nombre", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Institución *</IonLabel>
-                            <IonInput required disabled={isDisabled("institucion")} value={trabajo.institucion} onIonChange={(e) => updateTrabajo(i, "institucion", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">País *</IonLabel>
-                            <IonInput required disabled={isDisabled("pais")} value={trabajo.pais} onIonChange={(e) => updateTrabajo(i, "pais", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Fecha finalización *</IonLabel>
-                            <IonInput type="date" required disabled={isDisabled("fechaFinalizacion")} value={trabajo.fechaFinalizacion} onIonChange={(e) => updateTrabajo(i, "fechaFinalizacion", e.detail.value!)} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Total horas *</IonLabel>
-                            <IonInput type="number" required disabled={isDisabled("numeroTotalHoras")} value={trabajo.numeroTotalHoras} onIonChange={(e) => updateTrabajo(i, "numeroTotalHoras", Number(e.detail.value))} />
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Medio de capacitación *</IonLabel>
-                            <IonSelect required disabled={isDisabled("medioCapacitacion")} value={trabajo.medioCapacitacion} onIonChange={(e) => updateTrabajo(i, "medioCapacitacion", e.detail.value)}>
-                              {Object.entries(medioCapacitacionLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel position="stacked">Modalidad *</IonLabel>
-                            <IonSelect required disabled={isDisabled("modalidad")} value={trabajo.modalidad} onIonChange={(e) => updateTrabajo(i, "modalidad", e.detail.value)}>
-                              {Object.entries(modalidadLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
-                            </IonSelect>
-                          </IonItem>
-                          <FileUploadField label="Diploma / acta / certificado" required value={trabajo.diplomaActaCertificadoEstudio} onChange={(url) => updateTrabajo(i, "diplomaActaCertificadoEstudio", url)} />
-                        </div>
-                    );
-                  })}
-                  <IonButton expand="block" onClick={() => setTrabajos((prev) => [...prev, emptyEducacionTrabajo()])}>
-                    + Agregar educación para el trabajo
-                  </IonButton>
-                </>
-            )}
-
-            <div className="ion-margin-top" style={{ display: "flex", justifyContent: "flex-end" }}>
-              <IonButton type="submit" disabled={saving}>
-                {saving ? <IonSpinner name="crescent" /> : "Guardar sección"}
+        <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+          {["Formación Académica", "Idiomas", "Educación para el Trabajo"].map((t, i) => (
+              <IonButton key={t} fill={tab === i ? "solid" : "outline"} onClick={() => setTab(i)} disabled={saving}>
+                {t}
               </IonButton>
-            </div>
-          </form>
-        </IonContent>
-      </IonPage>
+          ))}
+        </div>
+
+        <form onSubmit={handleSave}>
+          {tab === 0 && (
+              <>
+                <IonText color="medium">
+                  <p>Puede agregar varias formaciones. Guarde los cambios cuando termine de completar la información.</p>
+                </IonText>
+                {formaciones.map((f, i) => {
+                  const hasId = !!f.id;
+                  const isDisabled = (field: keyof FormacionAcademica) => isFormacionFieldDisabled(field, hasId);
+                  return (
+                      <div key={f.id ?? f.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
+                        <h3>
+                          Estudio #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
+                          {hasId ? null : formaciones.length > 1 && (
+                              <IonButton fill="clear" color="danger" onClick={() => setFormaciones((prev) => prev.filter((_, idx) => idx !== i))}>
+                                Quitar
+                              </IonButton>
+                          )}
+                        </h3>
+                        <IonItem>
+                          <IonLabel position="stacked">Nivel académico *</IonLabel>
+                          <IonSelect required disabled={isDisabled("nivelAcademico")} value={f.nivelAcademico} onIonChange={(e) => updateFormacion(i, "nivelAcademico", e.detail.value)}>
+                            {Object.entries(NivelAcademicoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Nivel de formación *</IonLabel>
+                          <IonSelect required disabled={isDisabled("nivelFormacion")} value={f.nivelFormacion} onIonChange={(e) => updateFormacion(i, "nivelFormacion", e.detail.value)}>
+                            {Object.entries(NivelFormacionLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Área de conocimiento</IonLabel>
+                          <IonSelect value={f.areaConocimiento} onIonChange={(e) => updateFormacion(i, "areaConocimiento", e.detail.value)}>
+                            {Object.entries(AreaConocimientoLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">País *</IonLabel>
+                          <IonInput required disabled={isDisabled("pais")} value={f.pais} onIonChange={(e) => updateFormacion(i, "pais", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Institución *</IonLabel>
+                          <IonInput required disabled={isDisabled("institucionFormacionAcademica")} value={f.institucionFormacionAcademica} onIonChange={(e) => updateFormacion(i, "institucionFormacionAcademica", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Programa académico</IonLabel>
+                          <IonInput value={f.programaAcademico} onIonChange={(e) => updateFormacion(i, "programaAcademico", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Título obtenido *</IonLabel>
+                          <IonInput required disabled={isDisabled("tituloObtenido")} value={f.tituloObtenido} onIonChange={(e) => updateFormacion(i, "tituloObtenido", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Estado del estudio *</IonLabel>
+                          <IonSelect required value={f.estadoEstudio} onIonChange={(e) => updateFormacion(i, "estadoEstudio", e.detail.value)}>
+                            {Object.entries(EstadoEstudioLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Semestres aprobados</IonLabel>
+                          <IonInput type="number" value={f.semestresAprobados ?? ""} onIonChange={(e) => updateFormacion(i, "semestresAprobados", e.detail.value ? Number(e.detail.value) : undefined)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Fecha terminación materias</IonLabel>
+                          <IonInput type="date" disabled={f.estadoEstudio === EstadoEstudio.EnProceso} value={f.fechaTerminacionMaterias} onIonChange={(e) => updateFormacion(i, "fechaTerminacionMaterias", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Fecha de grado</IonLabel>
+                          <IonInput type="date" disabled={f.estadoEstudio === EstadoEstudio.EnProceso} value={f.fechaGrado} onIonChange={(e) => updateFormacion(i, "fechaGrado", e.detail.value!)} />
+                        </IonItem>
+                        <FileUploadField label="Soporte de educación formal" value={f.archivoEducacionFormal} onChange={(url) => updateFormacion(i, "archivoEducacionFormal", url)} />
+                        <FileUploadField label="Tarjeta profesional" value={f.archivoTarjetaProfesional ?? f.archivoTarjetaProfesioal} onChange={(url) => {
+                          updateFormacion(i, "archivoTarjetaProfesional", url);
+                          updateFormacion(i, "archivoTarjetaProfesioal", url);
+                        }} />
+                        <IonItem lines="none">
+                          <IonCheckbox checked={f.estudioConvalidado} onIonChange={(e) => updateFormacion(i, "estudioConvalidado", e.detail.checked)}>
+                            <IonLabel>¿Estudio convalidado?</IonLabel>
+                          </IonCheckbox>
+                        </IonItem>
+                        {f.estudioConvalidado && (
+                            <IonItem>
+                              <IonLabel position="stacked">Fecha de convalidación *</IonLabel>
+                              <IonInput type="date" required value={f.fechaConvalidacion ?? ""} onIonChange={(e) => updateFormacion(i, "fechaConvalidacion", e.detail.value!)} />
+                            </IonItem>
+                        )}
+                      </div>
+                  );
+                })}
+                <IonButton expand="block" onClick={() => setFormaciones((prev) => [...prev, emptyFormacion()])}>
+                  + Agregar otra formación
+                </IonButton>
+              </>
+          )}
+
+          {tab === 1 && (
+              <>
+                <IonText color="medium">
+                  <p>Puede agregar varios idiomas. Para cambiar un idioma ya guardado, solo puede modificar el certificado.</p>
+                </IonText>
+                {idiomas.length === 0 && <IonText color="medium"><p>No ha registrado idiomas. Agregue uno a continuación.</p></IonText>}
+                {idiomas.map((idioma, i) => {
+                  const hasId = !!idioma.id;
+                  const isDisabled = (field: keyof Idioma) => isIdiomaFieldDisabled(field, hasId);
+                  return (
+                      <div key={idioma.id ?? idioma.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
+                        <h3>
+                          Idioma #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
+                          {hasId ? null : <IonButton fill="clear" color="danger" onClick={() => setIdiomas((prev) => prev.filter((_, idx) => idx !== i))}>Quitar</IonButton>}
+                        </h3>
+                        <IonItem>
+                          <IonLabel position="stacked">Idioma *</IonLabel>
+                          <IonInput required disabled={isDisabled("idioma")} value={idioma.idioma} onIonChange={(e) => updateIdioma(i, "idioma", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Conversación *</IonLabel>
+                          <IonSelect required disabled={isDisabled("conversacion")} value={idioma.conversacion} onIonChange={(e) => updateIdioma(i, "conversacion", e.detail.value)}>
+                            {Object.entries(IdiomaNivelLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Lectura *</IonLabel>
+                          <IonSelect required disabled={isDisabled("lectura")} value={idioma.lectura} onIonChange={(e) => updateIdioma(i, "lectura", e.detail.value)}>
+                            {Object.entries(IdiomaNivelLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Redacción *</IonLabel>
+                          <IonSelect required disabled={isDisabled("redaccion")} value={idioma.redaccion} onIonChange={(e) => updateIdioma(i, "redaccion", e.detail.value)}>
+                            {Object.entries(IdiomaNivelLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Fecha del certificado *</IonLabel>
+                          <IonInput type="date" required disabled={isDisabled("fechaCertificado")} value={idioma.fechaCertificado} onIonChange={(e) => updateIdioma(i, "fechaCertificado", e.detail.value!)} />
+                        </IonItem>
+                        <FileUploadField label="Certificado" value={idioma.certificado} onChange={(url) => updateIdioma(i, "certificado", url)} />
+                        <IonItem lines="none">
+                          <IonCheckbox checked={idioma.lenguaNativa} onIonChange={(e) => updateIdioma(i, "lenguaNativa", e.detail.checked)} disabled={isDisabled("lenguaNativa")}>
+                            <IonLabel>¿Es lengua nativa?</IonLabel>
+                          </IonCheckbox>
+                        </IonItem>
+                      </div>
+                  );
+                })}
+                <IonButton expand="block" onClick={() => setIdiomas((prev) => [...prev, emptyIdioma()])}>
+                  + Agregar idioma
+                </IonButton>
+              </>
+          )}
+
+          {tab === 2 && (
+              <>
+                <IonText color="medium">
+                  <p>Puede agregar varias capacitaciones. Para cambiar una capacitación ya guardada, solo puede modificar el diploma, acta o certificado.</p>
+                </IonText>
+                {trabajos.length === 0 && <IonText color="medium"><p>No ha registrado educación para el trabajo.</p></IonText>}
+                {trabajos.map((trabajo, i) => {
+                  const hasId = !!trabajo.id;
+                  const isDisabled = (field: keyof EducacionTrabajo) => isTrabajoFieldDisabled(field, hasId);
+                  return (
+                      <div key={trabajo.id ?? trabajo.clientId ?? i} style={{ marginBottom: "24px", border: "1px solid var(--ion-color-medium)", borderRadius: "8px", padding: "12px" }}>
+                        <h3>
+                          Capacitación #{i + 1} {hasId ? "(existente)" : "(nuevo)"}
+                          {hasId ? null : <IonButton fill="clear" color="danger" onClick={() => setTrabajos((prev) => prev.filter((_, idx) => idx !== i))}>Quitar</IonButton>}
+                        </h3>
+                        <IonItem>
+                          <IonLabel position="stacked">Nombre *</IonLabel>
+                          <IonInput required disabled={isDisabled("nombre")} value={trabajo.nombre} onIonChange={(e) => updateTrabajo(i, "nombre", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Institución *</IonLabel>
+                          <IonInput required disabled={isDisabled("institucion")} value={trabajo.institucion} onIonChange={(e) => updateTrabajo(i, "institucion", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">País *</IonLabel>
+                          <IonInput required disabled={isDisabled("pais")} value={trabajo.pais} onIonChange={(e) => updateTrabajo(i, "pais", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Fecha finalización *</IonLabel>
+                          <IonInput type="date" required disabled={isDisabled("fechaFinalizacion")} value={trabajo.fechaFinalizacion} onIonChange={(e) => updateTrabajo(i, "fechaFinalizacion", e.detail.value!)} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Total horas *</IonLabel>
+                          <IonInput type="number" required disabled={isDisabled("numeroTotalHoras")} value={trabajo.numeroTotalHoras} onIonChange={(e) => updateTrabajo(i, "numeroTotalHoras", Number(e.detail.value))} />
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Medio de capacitación *</IonLabel>
+                          <IonSelect required disabled={isDisabled("medioCapacitacion")} value={trabajo.medioCapacitacion} onIonChange={(e) => updateTrabajo(i, "medioCapacitacion", e.detail.value)}>
+                            {Object.entries(medioCapacitacionLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <IonItem>
+                          <IonLabel position="stacked">Modalidad *</IonLabel>
+                          <IonSelect required disabled={isDisabled("modalidad")} value={trabajo.modalidad} onIonChange={(e) => updateTrabajo(i, "modalidad", e.detail.value)}>
+                            {Object.entries(modalidadLabels).map(([val, label]) => <IonSelectOption key={val} value={val}>{label}</IonSelectOption>)}
+                          </IonSelect>
+                        </IonItem>
+                        <FileUploadField label="Diploma / acta / certificado" required value={trabajo.diplomaActaCertificadoEstudio} onChange={(url) => updateTrabajo(i, "diplomaActaCertificadoEstudio", url)} />
+                      </div>
+                  );
+                })}
+                <IonButton expand="block" onClick={() => setTrabajos((prev) => [...prev, emptyEducacionTrabajo()])}>
+                  + Agregar educación para el trabajo
+                </IonButton>
+              </>
+          )}
+
+          <div className="ion-margin-top" style={{ display: "flex", justifyContent: "flex-end" }}>
+            <IonButton type="submit" disabled={saving}>
+              {saving ? <IonSpinner name="crescent" /> : "Guardar sección"}
+            </IonButton>
+          </div>
+        </form>
+      </IonContent>
   );
 };
 
