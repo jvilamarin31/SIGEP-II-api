@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .frameOptions(frameOptions -> frameOptions.deny())
 
                         // 2. Mitiga: Content Security Policy (CSP) Header Not Set (Medium)
-                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none';"))
+                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; http://localhost capacitor://localhost ionic://localhost; frame-ancestors 'none';"))
 
                         // 3. Mitiga: Strict-Transport-Security Header Not Set (Low)
                         .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
@@ -52,6 +52,7 @@ public class SecurityConfig {
                 // -----------------------------------------------------------------
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                         .requestMatchers("/api/auth/login","/api/auth/pedirEnlace","/api/auth/recuperarContraseña").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -70,11 +71,12 @@ public class SecurityConfig {
         "https://*.vercel.app",
         "http://localhost:8100",
         "capacitor://localhost",
-        "ionic://localhost"
+        "ionic://localhost",
+        "http://localhost"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
